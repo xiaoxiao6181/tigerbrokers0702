@@ -1,0 +1,270 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title data-i18n="fund.title">资金明细</title>
+    <style type="text/css">
+        html { font-size: 35px; }
+        .f_box_accountrecord { padding: 10px; }
+        .t_box_accountrecord ul { 
+            background: #fff; 
+            border-radius: 8px; 
+            margin-bottom: 10px; 
+            padding: 15px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        }
+        .t_box_accountrecord li { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 8px; 
+            font-size: 14px; 
+        }
+        .t_box_accountrecord li span { 
+            color: #fff; 
+            min-width: 60px; 
+        }
+        .t_box_accountrecord li p { 
+            color: #fff; 
+            flex: 1; 
+            /* text-align: right; */
+            margin: 0; 
+        }
+        .t_box_accountrecord li:last-child p { 
+            font-weight: bold; 
+            font-size: 16px; 
+        }
+        .positive { color: #67c23a; } /* 正数 - 绿色 */
+        .negative { color: #f56c6c; } /* 负数 - 红色 */
+        .neutral { color: #409eff; } /* 中性 - 蓝色 */
+        .no-data { 
+            text-align: center; 
+            padding: 40px 20px; 
+            color: #999; 
+            font-size: 16px; 
+        }
+        .loading { 
+            text-align: center; 
+            padding: 20px; 
+            color: #999; 
+        }
+        .hide { display: none; }
+    </style>
+    <link rel="stylesheet" type="text/css" href="./static/css/common.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/box_pay.css">
+    <script type="text/javascript" src="./static/js/bignumber.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="box">
+            <div class="jun-content">
+                <div class="f_box_accountrecord">
+                    <div class="t_header">
+                        <span>
+                            <img src="./static/img/goback.png" alt="" onClick="javascript:history.back()">
+                        </span>
+                        <span>
+                            <i data-i18n="fund.title">资金明细</i>
+                        </span>
+                    </div>
+                    <div class="t_box_accountrecord" id="fundList">
+                        <!-- 资金明细将通过JS动态生成 -->
+                        <div class="loading" data-i18n="fund.loading">加载中...</div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <div>
+                    <a href="./index.html" class="t_span one">
+                        <i></i>
+                        <span data-i18n="nav.home">首页</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./recharge.html" class="t_span two">
+                        <i></i>
+                        <span data-i18n="nav.recharge">充值</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./hold.html" class="t_span three">
+                        <i></i>
+                        <span data-i18n="nav.hold">持仓</span>
+                    </a>
+                </div>
+                <div>
+                    <a onClick="" class="t_span four">
+                        <i></i>
+                        <span data-i18n="nav.customerService">客服</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./user.html" class="t_span five">
+                        <i></i>
+                        <span data-i18n="nav.my">我的</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 添加i18n.js -->
+    <script src="./static/js/i18n.js"></script>
+    <script src="./static/js/jquery-1.9.1.min.js"></script>
+    <script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+    <script src="./static/js/utils.js"></script>
+    
+    <script type="text/javascript">
+        $(function() {
+            initPageWithData(
+                function() {
+                    return AjaxUtil.get('/index/user/fund', { loadingHide: true });
+                },
+                function(res) {
+                    renderFundList(res);
+                }
+            );
+            
+            $(document).on('languageChanged', function(event, lang) {
+                loadFundData();
+            });
+
+            $(document).on('pageRestored', function() {
+                loadFundData();
+            });
+            
+            highlightNav();
+        });
+        
+        function loadFundData() {
+            $('#fundList').html('<div class="loading">' + I18n.t('fund.loading') + '</div>');
+            AjaxUtil.get('/index/user/fund', { loadingHide: true }).then(renderFundList);
+        }
+
+        function renderFundList(res) {
+            if (res.code == 1) {
+                const newList = res.data.finance || [];
+                
+                if (newList.length > 0) {
+                    let htmlStr = "";
+                    $.each(newList, function (index, item) {
+                        const amount = parseFloat(item.money) || 0;
+                        const amountClass = getAmountClass(amount);
+                        const formattedAmount = formatAmount(amount);
+                        
+                        htmlStr += `
+                        <ul>
+                            <li>
+                                <span data-i18n="fund.time">${I18n.t('fund.time')}：</span>
+                                <p>${item.time || ''}</p>
+                            </li>
+                            <li>
+                                <span data-i18n="fund.remark">${I18n.t('fund.remark')}：</span>
+                                <p>${formatRemark(item.reason)}</p>
+                            </li>
+                            <li>
+                                <span data-i18n="fund.amount">${I18n.t('fund.amount')}：</span>
+                                <p class="${amountClass}">${formattedAmount}</p>
+                            </li>
+                        </ul>`;
+                    });
+                    
+                    $('#fundList').html(htmlStr);
+                } else {
+                    $('#fundList').html('<div class="no-data">' + I18n.t('fund.noData') + '</div>');
+                }
+            } else {
+                console.log(res.info || '获取资金明细失败');
+                $('#fundList').html('<div class="no-data" style="color:#f56c6c;">' + (res.info || I18n.t('fund.loadingFailed')) + '</div>');
+            }
+        }
+        
+        function getAmountClass(amount) {
+            if (amount > 0) {
+                return 'positive';
+            } else if (amount < 0) {
+                return 'negative';
+            } else {
+                return 'neutral';
+            }
+        }
+        
+        function formatAmount(amount) {
+            // 格式化为两位小数，正数显示+号
+            if (amount > 0) {
+                return '+' + amount.toFixed(2);
+            } else {
+                return amount.toFixed(2);
+            }
+        }
+        
+        function formatRemark(remark) {
+            if (!remark) return '';
+            let text = String(remark).replace(/\s*USDT\s*$/i, '').trim();
+
+            const patterns = [
+                { regex: /^余额提现([\d.]+)$/, key: 'fund.remarks.balanceWithdraw' },
+                { regex: /^Withdrawal of balance([\d.]+)$/i, key: 'fund.remarks.balanceWithdraw' },
+                { regex: /^提现失败，返还金额([\d.]+)元$/, key: 'fund.remarks.withdrawFailedRefund' }
+            ];
+
+            for (let i = 0; i < patterns.length; i++) {
+                const match = text.match(patterns[i].regex);
+                if (match) {
+                    return I18n.t(patterns[i].key, { amount: match[1] });
+                }
+            }
+
+            const remarkMap = [
+                ['充值', 'fund.types.recharge'],
+                ['交易', 'fund.types.trade'],
+                ['盈利', 'fund.types.profit'],
+                ['亏损', 'fund.types.loss'],
+                ['赠金', 'fund.types.bonus'],
+                ['手续费', 'fund.types.fee'],
+                ['退款', 'fund.types.refund']
+            ];
+            let formattedRemark = text;
+            for (let i = 0; i < remarkMap.length; i++) {
+                const key = remarkMap[i][0];
+                const i18nKey = remarkMap[i][1];
+                if (formattedRemark.indexOf(key) !== -1) {
+                    formattedRemark = formattedRemark.split(key).join(I18n.t(i18nKey));
+                }
+            }
+            return formattedRemark;
+        }
+        
+        function highlightNav() {
+            var nav = "fund";
+            $(".t_span").removeClass("router-link-exact-active");
+            
+            // 由于资金明细在"我的"页面内，高亮"我的"导航
+            if (nav == "fund" || nav == "user") {
+                $(".five").addClass("router-link-exact-active");
+            }
+        }
+        
+        // 在语言包中添加可能缺少的键名
+        // 可以添加到i18n.js初始化之后
+        function extendTranslations() {
+            if (!I18n.translations.fund) {
+                I18n.translations.fund = {};
+            }
+            
+            // 确保有加载失败的提示
+            if (!I18n.translations.fund.loadingFailed) {
+                I18n.translations.fund.loadingFailed = '加载失败';
+            }
+        }
+        
+        // 调用扩展翻译
+        extendTranslations();
+    </script>
+</body>
+</html>

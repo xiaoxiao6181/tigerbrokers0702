@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title data-i18n="inbox.pageTitle">站内信</title>
+    <style type="text/css">
+        html { 
+            font-size: 35px; 
+        }
+        .item_box {
+            display: flex;
+        }
+        .f_content li {
+            padding: 0 0.5333rem;
+        }
+        .no-messages {
+            text-align: center;
+            padding: 2rem 0;
+            color: #999;
+            font-size: 0.8rem;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="./static/css/common.css">
+    <script type="text/javascript" src="./static/js/bignumber.min.js"></script>
+</head>
+<body>
+    <link rel="stylesheet" type="text/css" href="./static/css/box_pay.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/tipmask.css">
+    
+    <div id="app">
+        <div class="box">
+            <div class="jun-content">
+                <div class="f_box_bank">
+                    <div class="t_header">
+                        <span>
+                            <img src="./static/img/goback.png" alt="" onClick="javascript:history.back()">
+                        </span>
+                        <span>
+                            <i data-i18n="inbox.title">站内信</i>
+                        </span>
+                    </div>
+                    <div class="f_content">
+                        <!-- 站内信列表将在这里动态生成 -->
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <div>
+                    <a href="./index.html" class="t_span one">
+                        <i></i>
+                        <span data-i18n="nav.home">首页</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./recharge.html" class="t_span two">
+                        <i></i>
+                        <span data-i18n="nav.recharge">充值</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./hold.html" class="t_span three">
+                        <i></i>
+                        <span data-i18n="nav.hold">持仓</span>
+                    </a>
+                </div>
+                <div>
+                    <a onClick="" class="t_span four">
+                        <i></i>
+                        <span data-i18n="nav.customerService">客服</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./user.html" class="t_span five">
+                        <i></i>
+                        <span data-i18n="nav.my">我的</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 提示框 -->
+    <div class="tipMask hide">
+        <div class="cont">
+            <p class="title" data-i18n="common.prompt">温馨提示</p>
+            <p class="stitle contents"></p>
+            <div id="msgBtn">
+                <div class="confirm guanbi" data-i18n="common.confirm">确定</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 添加i18n.js -->
+    <script src="./static/js/i18n.js"></script>
+    <script type="text/javascript" src="./static/js/jquery-1.9.1.min.js"></script>
+    <script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+    <script src="./static/js/utils.js"></script>
+    
+    <script type="text/javascript">
+		
+        $(function() {
+            // 初始化语言
+            const savedLang = localStorage.getItem('preferredLanguage') || 'zh-CN';
+            I18n.init(savedLang).then(() => {
+                console.log('语言初始化完成:', I18n.currentLang);
+                loadMessages();
+                updateUIText();
+                setupEventListeners();
+            });
+            
+            // 监听语言变化
+            $(document).on('languageChanged', function(event, lang) {
+                console.log('语言已切换到:', lang);
+                loadMessages();
+                updateUIText();
+            });
+            
+            // 高亮当前导航
+            highlightNav();
+        });
+        
+        function loadMessages() {
+            // 显示加载中
+            $('.f_content').html('<div class="no-messages" data-i18n="inbox.loading">加载中...</div>');
+            
+            AjaxUtil.get("/index/user/getMsgList").then(function (res) {
+                if (res.code == 1 && res.data && res.data.list && res.data.list.length > 0) {
+                    const newList = res.data.list;
+                    let htmlStr = "";
+                    
+                    $.each(newList, function (index, item) {
+                        const encodedData = encodeURIComponent(JSON.stringify(item));
+                        htmlStr += `<ul class="f_withdraw">
+                                    <li class="banklist">
+                                        <a class="item_box" href="./msg_view.html?data=${encodedData}">
+                                            <span style="flex:1;">
+                                                ${item.title}
+                                            </span>
+											<span style="color: ${item.is_read==1?'green':'red'};">${item.is_read==1?I18n.t('inbox.read'):I18n.t('inbox.unread')}</span>
+                                          
+                                        </a>
+                                    </li>
+                                </ul>`;
+                    });
+					
+			
+                    
+                    $('.f_content').html(htmlStr);
+                } else {
+                    // 没有消息时显示提示
+                    $('.f_content').html(`<div class="no-messages" data-i18n="inbox.noMessages">暂无站内信</div>`);
+                    // 更新翻译
+                    if (typeof I18n !== 'undefined') {
+                        $('[data-i18n="inbox.noMessages"]').text(I18n.t('inbox.noMessages'));
+                    }
+                }
+            })
+        }
+        
+        function updateUIText() {
+            // 更新标题
+            document.title = I18n.t('inbox.pageTitle');
+            
+            // 更新导航栏标题
+            $('.t_header i[data-i18n]').text(I18n.t('inbox.title'));
+            
+            // 更新导航栏文字
+            $('[data-i18n="nav.home"]').text(I18n.t('nav.home'));
+            $('[data-i18n="nav.recharge"]').text(I18n.t('nav.recharge'));
+            $('[data-i18n="nav.hold"]').text(I18n.t('nav.hold'));
+            $('[data-i18n="nav.customerService"]').text(I18n.t('nav.customerService'));
+            $('[data-i18n="nav.my"]').text(I18n.t('nav.my'));
+            
+            // 更新提示框文本
+            $('.title[data-i18n="common.prompt"]').text(I18n.t('common.prompt'));
+            $('.confirm.guanbi[data-i18n="common.confirm"]').text(I18n.t('common.confirm'));
+        }
+        
+        function setupEventListeners() {
+            // 重新加载按钮（如果需要）
+            // 可以添加重新加载按钮的点击事件
+        }
+        
+        function highlightNav() {
+            var nav = "user";
+            $(".t_span").removeClass("router-link-exact-active");
+            
+            // 站内信在"我的"页面内，高亮"我的"导航
+            if (nav == "user") {
+                $(".five").addClass("router-link-exact-active");
+            }
+        }
+        
+        function showMessage(title, content, type) {
+            const titleText = title || I18n.t('common.prompt');
+            const contentText = content || '';
+            
+            $(".tipMask .title").text(titleText);
+            $(".tipMask .contents").html(contentText);
+            
+            let btnHtml = '';
+            if (type === 2) {
+                btnHtml = `<div class="confirm guanbi" onclick="$('.tipMask').hide(); loadMessages();">${I18n.t('common.confirm')}</div>`;
+            } else {
+                btnHtml = `<div class="confirm guanbi" onclick="$('.tipMask').hide();">${I18n.t('common.confirm')}</div>`;
+            }
+            
+            $("#msgBtn").html(btnHtml);
+            $(".tipMask").removeClass("hide").show();
+        }
+    </script>
+</body>
+</html>

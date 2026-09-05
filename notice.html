@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title data-i18n="latestAnnouncement">最新公告</title>
+    <style type="text/css">
+        html { font-size: 35px; }
+   
+    </style>
+    <link rel="stylesheet" type="text/css" href="./static/css/common.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/box_pay.css">
+    <script type="text/javascript" src="./static/js/bignumber.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="box">
+            <div class="jun-content">
+                <div class="f_box_bank">
+                    <div class="t_header">
+                        <span>
+                            <img src="./static/img/goback.png" alt="" onClick="javascript:history.back()">
+                        </span>
+                        <span>
+                            <i data-i18n="latestAnnouncement">最新公告</i>
+                        </span>
+                    </div>
+                    <div class="f_content" style="overflow: auto;">
+                        <ul class="list">
+                            <!-- 公告列表将通过JS动态生成 -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <div>
+                    <a href="./index.html" class="t_span one">
+                        <i></i>
+                        <span data-i18n="nav.home">首页</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./recharge.html" class="t_span two">
+                        <i></i>
+                        <span data-i18n="nav.recharge">充值</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./hold.html" class="t_span three">
+                        <i></i>
+                        <span data-i18n="nav.hold">持仓</span>
+                    </a>
+                </div>
+                <div>
+                    <a onClick="" class="t_span four">
+                        <i></i>
+                        <span data-i18n="nav.customerService">客服</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./user.html" class="t_span five">
+                        <i></i>
+                        <span data-i18n="nav.my">我的</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 添加i18n.js -->
+    <script src="./static/js/i18n.js"></script>
+    <script src="./static/js/jquery-1.9.1.min.js"></script>
+    <script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+    
+    <script type="text/javascript">
+        $(function() {
+            // 初始化语言
+            const savedLang = localStorage.getItem('preferredLanguage') || 'zh-CN';
+            I18n.init(savedLang).then(() => {
+                console.log('语言初始化完成:', I18n.currentLang);
+                loadAnnouncements();
+            });
+            
+            // 监听语言变化
+            $(document).on('languageChanged', function(event, lang) {
+                console.log('语言已切换到:', lang);
+                // 只需要重新应用静态文本的翻译，公告内容不变
+            });
+            
+            // 高亮当前导航
+            highlightNav();
+        });
+        
+        function loadAnnouncements() {
+            AjaxUtil.get("/index/index/getArticleByTypeName?name=最新公告").then((res) => {
+                const newList = res.data.list || [];
+                let htmlStr = "";
+                
+                if (newList.length === 0) {
+                    htmlStr = '<li class="item" style="text-align:center;padding:20px;color:#999;">暂无公告</li>';
+                } else {
+                    $.each(newList, function (index, item) {
+                        // 对标题进行URL编码，防止特殊字符问题
+                        const encodedTitle = encodeURIComponent(item.title || '');
+                        htmlStr += `<li class="item">
+                                    <a href="./about_details.html?title=${encodedTitle}">
+                                        <span>${item.title || ''}</span>
+                                        <i class="iconfont icon-arrow-right"></i>
+                                    </a>
+                                </li>`;
+                    });
+                }
+                
+                $('.list').html(htmlStr);
+            })
+        }
+        
+        function highlightNav() {
+            var nav = "notice";
+            $(".t_span").removeClass("router-link-exact-active");
+            
+            // 由于最新公告在"我的"页面内，高亮"我的"导航
+            if (nav == "notice" || nav == "user") {
+                $(".five").addClass("router-link-exact-active");
+            }
+        }
+    </script>
+</body>
+</html>

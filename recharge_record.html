@@ -1,0 +1,197 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"
+		name="viewport">
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta content="black" name="apple-mobile-web-app-status-bar-style">
+		<meta content="telephone=no" name="format-detection">
+		<meta content="email=no" name="format-detection">
+		<title>
+			充值记录
+		</title>
+		<style type="text/css">
+			html { font-size: 35px; }
+			.hide{
+				display: none;
+			}
+			.color_0{
+				color:blue;
+			}
+			.color_1{
+				color:green;
+			}
+			.color_2{
+				color:red;
+			}
+		</style>
+		<link rel="stylesheet" type="text/css" href="./static/css/common.css">
+		<script type="text/javascript" src="./static/js/bignumber.min.js">
+		</script>
+	</head>
+	<body>
+		<link rel="stylesheet" type="text/css" href="./static/css/box_pay.css">
+		<div id="app">
+			<div class="box">
+				<!---->
+				<div class="jun-content">
+					<div class="f_box_accountrecord">
+						<div class="t_header">
+							<span>
+								<img src="/static/img/goback.png" alt="" onClick="javascript:history.back()">
+							</span>
+							<span>
+								<i>
+									充值记录
+								</i>
+							</span>
+						</div>
+						<div class="t_box_accountrecord">
+							
+							
+						</div>
+					</div>
+				</div>
+				<div class="footer">
+					<div>
+						<a href="./index.html" class="t_span one">
+							<i>
+							</i>
+							<span>
+								首页
+							</span>
+						</a>
+					</div>
+					<div>
+						<a href="./recharge.html" class="t_span two">
+							<i>
+							</i>
+							<span>
+								充值
+							</span>
+						</a>
+					</div>
+					<div>
+						<a href="./hold.html" class="t_span three">
+							<i>
+							</i>
+							<span>
+								持仓
+							</span>
+						</a>
+					</div>
+					<!--<div><a href="/index/user/yeb" class="t_span four"><i></i><span>余额宝</span></a></div>-->
+					<div>
+						<a onClick=""
+						class="t_span four">
+							<i>
+							</i>
+							<span>
+								客服
+							</span>
+						</a>
+					</div>
+					<div>
+						<a href="./user.html" class="t_span five">
+							<i>
+							</i>
+							<span>
+								我的
+							</span>
+						</a>
+					</div>
+				</div>
+				<script type="text/javascript" src="./static/js/jquery-1.9.1.min.js">
+				</script>
+				<script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+				<script src="./static/js/utils.js"></script>
+				<script type="text/javascript">
+					
+					
+					$(function() {
+						AjaxUtil.get("/index/user/recharge_record").then((res) => {
+						
+						  if (res.code==1) {
+						
+						    const newList = res.data.recharge;
+						    let htmlStr = "";
+						    $.each(newList, function (index, item) {
+						      htmlStr += `<ul>
+											<li>
+												<span>
+													时间：
+												</span>
+												<p>
+													${item.time}
+												</p>
+											</li>
+											<li>
+												<span>
+													金额：
+												</span>
+												<p>
+													${item.money}
+												</p>
+											</li>
+											<li>
+												<span>
+													类型：
+												</span>
+												<p>
+													${item.type}
+												</p>
+											</li>
+											<li>
+												<span>
+													状态：
+												</span>
+												<p>
+													<span class="${'color_'+item.status}">
+														${getStatusText(item.status)}
+													</span>
+												</p>
+											</li>
+											<li class=" ${item.status==2?'':'hide'}">
+												<span>
+													原因：
+												</span>
+												<p>
+													<span>
+														${item.reaolae}
+													</span>
+												</p>
+											</li>
+										</ul>	
+						        `;
+						      $(".t_box_accountrecord").html(htmlStr);
+						     
+						    });
+						  } else {
+						    console.log(res.info);
+						  }
+						});
+						var nav = "user";
+						if (nav == "index") {
+							$(".one").addClass("router-link-exact-active");
+						}
+						if (nav == "recharge") {
+							$(".two").addClass("router-link-exact-active");
+						}
+						if (nav == "hold") {
+							$(".three").addClass("router-link-exact-active");
+						}
+						if (nav == "yeb") {
+							$(".four").addClass("router-link-exact-active");
+						}
+						if (nav == "user") {
+							$(".five").addClass("router-link-exact-active");
+						}
+					})
+				</script>
+			</div>
+		</div>
+	</body>
+
+</html>

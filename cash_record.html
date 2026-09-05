@@ -1,0 +1,276 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title data-i18n="withdrawalRecord.pageTitle">提现记录</title>
+    <style type="text/css">
+        html { font-size: 35px; }
+        .hide{
+            display: none;
+        }
+        .color_0{
+            color:blue;
+        }
+        .color_1{
+            color:green;
+        }
+        .color_2{
+            color:red;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="./static/css/common.css">
+    <script type="text/javascript" src="./static/js/bignumber.min.js"></script>
+</head>
+<body>
+    <link rel="stylesheet" type="text/css" href="./static/css/box_pay.css">
+    <div id="app">
+        <div class="box">
+            <!---->
+            <div class="jun-content">
+                <div class="f_box_accountrecord">
+                    <div class="t_header">
+                        <span>
+                            <img src="./static/img/goback.png" alt="" onClick="javascript:history.back()">
+                        </span>
+                        <span>
+                            <i data-i18n="withdrawalRecord.title">提现记录</i>
+                        </span>
+                    </div>
+                    <div class="t_box_accountrecord">
+                        
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <div>
+                    <a href="./index.html" class="t_span one">
+                        <i></i>
+                        <span data-i18n="nav.home">首页</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./recharge.html" class="t_span two">
+                        <i></i>
+                        <span data-i18n="nav.recharge">充值</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./hold.html" class="t_span three">
+                        <i></i>
+                        <span data-i18n="nav.hold">持仓</span>
+                    </a>
+                </div>
+                <!--<div><a href="/index/user/yeb" class="t_span four"><i></i><span>余额宝</span></a></div>-->
+                <div>
+                    <a onClick="" class="t_span four">
+                        <i></i>
+                        <span data-i18n="nav.customerService">客服</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./user.html" class="t_span five">
+                        <i></i>
+                        <span data-i18n="nav.my">我的</span>
+                    </a>
+                </div>
+            </div>
+            <!-- 添加i18n.js -->
+            <script src="./static/js/i18n.js"></script>
+            <script type="text/javascript" src="./static/js/jquery-1.9.1.min.js"></script>
+            <script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+            <script src="./static/js/utils.js"></script>
+            <script type="text/javascript">
+                
+                // 定义状态文本映射函数
+                function getStatusText(status) {
+                    // 如果I18n已经初始化，使用多语言文本
+                    if (typeof I18n !== 'undefined' && I18n.t) {
+                        switch(parseInt(status)) {
+                            case 0: return I18n.t('withdrawalRecord.statusProcessing');
+                            case 1: return I18n.t('withdrawalRecord.statusSuccess');
+                            case 2: return I18n.t('withdrawalRecord.statusFailed');
+                            default: return I18n.t('withdrawalRecord.statusUnknown');
+                        }
+                    } else {
+                        // 默认中文文本
+                        switch(parseInt(status)) {
+                            case 0: return "处理中";
+                            case 1: return "成功";
+                            case 2: return "失败";
+                            default: return "未知";
+                        }
+                    }
+                }
+                
+                function updateUIText() {
+                    // 更新标题
+                    document.title = I18n.t('withdrawalRecord.pageTitle');
+                    
+                    // 更新导航栏标题
+                    $('.t_header i[data-i18n]').text(I18n.t('withdrawalRecord.title'));
+                    
+                    // 更新导航栏文字
+                    $('[data-i18n="nav.home"]').text(I18n.t('nav.home'));
+                    $('[data-i18n="nav.recharge"]').text(I18n.t('nav.recharge'));
+                    $('[data-i18n="nav.hold"]').text(I18n.t('nav.hold'));
+                    $('[data-i18n="nav.customerService"]').text(I18n.t('nav.customerService'));
+                    $('[data-i18n="nav.my"]').text(I18n.t('nav.my'));
+                }
+        
+                $(function() {
+                    // 初始化语言
+                    const savedLang = localStorage.getItem('preferredLanguage') || 'zh-CN';
+                    if (typeof I18n !== 'undefined') {
+                        I18n.init(savedLang).then(() => {
+                            console.log('语言初始化完成:', I18n.currentLang);
+                            
+                            // 加载提现记录
+                            AjaxUtil.get("/index/user/cash_record").then((res) => {
+                                if (res.code == 1) {
+                                    const newList = res.data.cash;
+                                    let htmlStr = "";
+                                    
+                                    // 定义标签文本
+                                    const timeLabel = I18n.t('withdrawalRecord.time');
+                                    const amountLabel = I18n.t('withdrawalRecord.amount');
+                                    const feeLabel = I18n.t('withdrawalRecord.fee');
+                                    const actualAmountLabel = I18n.t('withdrawalRecord.actualAmount');
+                                    const typeLabel = I18n.t('withdrawalRecord.type');
+                                    const statusLabel = I18n.t('withdrawalRecord.status');
+                                    const failureReasonLabel = I18n.t('withdrawalRecord.failureReason');
+                                    
+                                    $.each(newList, function (index, item) {
+                                        htmlStr += `
+                                            <ul>
+                                                <li>
+                                                    <span>${timeLabel}</span>
+                                                    <p>${item.time}</p>
+                                                </li>
+                                                <li>
+                                                    <span>${amountLabel}</span>
+                                                    <p>${item.money}</p>
+                                                </li>
+                                                <li>
+                                                    <span>${feeLabel}</span>
+                                                    <p>${item.sxf}</p>
+                                                </li>
+                                                <li>
+                                                    <span>${actualAmountLabel}</span>
+                                                    <p>${item.dzje}</p>
+                                                </li>
+                                                <li>
+                                                    <span>${typeLabel}</span>
+                                                    <p>${item.title}</p>
+                                                </li>
+                                                <li>
+                                                    <span>${statusLabel}</span>
+                                                    <p>
+                                                        <span class="${'color_'+item.status}">
+                                                            ${getStatusText(item.status)}
+                                                        </span>
+                                                    </p>
+                                                </li>
+                                                <li class="${item.status == 2 ? '' : 'hide'}">
+                                                    <span>${failureReasonLabel}</span>
+                                                    <p>${item.reaolae || I18n.t('withdrawalRecord.noReason')}</p>
+                                                </li>
+                                            </ul>
+                                        `;
+                                    });
+                                    $(".t_box_accountrecord").html(htmlStr);
+                                    
+                                } else {
+                                    console.log(res.info);
+                                    $(".t_box_accountrecord").html(`<div style="text-align:center;padding:1rem;color:#999;">${I18n.t('withdrawalRecord.noRecords')}</div>`);
+                                }
+                            });
+                            
+                            // 更新UI文本
+                            updateUIText();
+                            
+                            // 监听语言变化
+                            $(document).on('languageChanged', function(event, lang) {
+                                console.log('语言已切换到:', lang);
+                                location.reload(); // 简单起见，重新加载页面
+                            });
+                        });
+                    } else {
+                        // 如果i18n.js未加载，使用原逻辑
+                        AjaxUtil.get("/index/user/cash_record").then((res) => {
+                            if (res.code == 1) {
+                                const newList = res.data.cash;
+                                let htmlStr = "";
+                                $.each(newList, function (index, item) {
+                                    htmlStr += `
+                                        <ul>
+                                            <li>
+                                                <span>时间：</span>
+                                                <p>${item.time}</p>
+                                            </li>
+                                            <li>
+                                                <span>金额：</span>
+                                                <p>${item.money}</p>
+                                            </li>
+                                            <li>
+                                                <span>手续费：</span>
+                                                <p>${item.sxf}</p>
+                                            </li>
+                                            <li>
+                                                <span>实际到账：</span>
+                                                <p>${item.dzje}</p>
+                                            </li>
+                                            <li>
+                                                <span>类型：</span>
+                                                <p>${item.title}</p>
+                                            </li>
+                                            <li>
+                                                <span>状态：</span>
+                                                <p>
+                                                    <span class="${'color_'+item.status}">
+                                                        ${getStatusText(item.status)}
+                                                    </span>
+                                                </p>
+                                            </li>
+                                            <li class="${item.status == 2 ? '' : 'hide'}">
+                                                <span>失败原因：</span>
+                                                <p>${item.reaolae}</p>
+                                            </li>
+                                        </ul>
+                                    `;
+                                });
+                                $(".t_box_accountrecord").html(htmlStr);
+                            } else {
+                                console.log(res.info);
+                            }
+                        });
+                    }
+                    
+                    var nav = "user";
+                    if (nav == "index") {
+                        $(".one").addClass("router-link-exact-active");
+                    }
+                    if (nav == "recharge") {
+                        $(".two").addClass("router-link-exact-active");
+                    }
+                    if (nav == "hold") {
+                        $(".three").addClass("router-link-exact-active");
+                    }
+                    if (nav == "yeb") {
+                        $(".four").addClass("router-link-exact-active");
+                    }
+                    if (nav == "user") {
+                        $(".five").addClass("router-link-exact-active");
+                    }
+                })
+            </script>
+        </div>
+    </div>
+</body>
+</html>

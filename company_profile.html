@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <title data-i18n="companyProfile.title">公司简介</title>
+    <style type="text/css">
+        html { font-size: 35px; }
+        .cp-page { min-height: 100vh; background: #0f1419; padding-bottom: 1.6rem; }
+        .cp-hero {
+            position: relative;
+            min-height: 4.2rem;
+            background: linear-gradient(135deg, #1a2035 0%, #3d2a6b 55%, #7d5dd8 100%);
+            overflow: hidden;
+        }
+        .cp-hero.has-cover { background: #111723; }
+        .cp-hero-bg {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.45;
+        }
+        .cp-hero-mask {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(15,20,25,0.15) 0%, rgba(15,20,25,0.92) 100%);
+        }
+        .cp-hero-body {
+            position: relative;
+            z-index: 2;
+            padding: 1.1rem 0.4rem 0.8rem;
+        }
+        .cp-badge {
+            display: inline-block;
+            padding: 0.06rem 0.22rem;
+            border-radius: 999px;
+            background: rgba(125, 93, 216, 0.35);
+            border: 1px solid rgba(255,255,255,0.18);
+            color: #e8ddff;
+            font-size: 0.32rem;
+            margin-bottom: 0.25rem;
+        }
+        .cp-title {
+            color: #fff;
+            font-size: 0.56rem;
+            font-weight: 700;
+            line-height: 1.35;
+            margin: 0 0 0.18rem;
+        }
+        .cp-subtitle {
+            color: rgba(255,255,255,0.82);
+            font-size: 0.36rem;
+            line-height: 1.55;
+            margin: 0;
+        }
+        .cp-summary {
+            margin: 0.35rem 0.4rem 0;
+            padding: 0.35rem 0.4rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(125, 93, 216, 0.25);
+            border-radius: 0.2rem;
+            color: #d8dce6;
+            font-size: 0.34rem;
+            line-height: 1.65;
+        }
+        .cp-cards {
+            display: flex;
+            gap: 0.22rem;
+            padding: 0.35rem 0.4rem 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .cp-card {
+            flex: 0 0 2.8rem;
+            background: linear-gradient(160deg, rgba(125,93,216,0.22) 0%, rgba(17,23,35,0.95) 100%);
+            border: 1px solid rgba(125, 93, 216, 0.28);
+            border-radius: 0.22rem;
+            padding: 0.32rem 0.28rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+        }
+        .cp-card-label {
+            color: #b89cff;
+            font-size: 0.28rem;
+            margin-bottom: 0.14rem;
+        }
+        .cp-card-text {
+            color: #fff;
+            font-size: 0.32rem;
+            line-height: 1.5;
+            min-height: 0.9rem;
+        }
+        .cp-content-wrap {
+            margin: 0.4rem 0.4rem 0;
+            background: #111723;
+            border-radius: 0.22rem;
+            border: 1px solid rgba(255,255,255,0.06);
+            overflow: hidden;
+        }
+        .cp-content-head {
+            padding: 0.32rem 0.36rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            color: #fff;
+            font-size: 0.38rem;
+            font-weight: 600;
+        }
+        .cp-content-head:before {
+            content: '';
+            display: inline-block;
+            width: 0.08rem;
+            height: 0.34rem;
+            background: #7d5dd8;
+            border-radius: 2px;
+            margin-right: 0.16rem;
+            vertical-align: middle;
+        }
+        .cp-content {
+            color: #d8dce6;
+            font-size: 0.34rem;
+            line-height: 1.75;
+            padding: 0.36rem;
+            word-break: break-word;
+        }
+        .cp-content img { max-width: 100%; height: auto; border-radius: 0.12rem; }
+        .cp-content p { margin: 0 0 0.24rem; }
+        .cp-empty, .cp-loading {
+            text-align: center;
+            color: #8b93a7;
+            font-size: 0.36rem;
+            padding: 1.2rem 0.4rem;
+        }
+        .cp-update {
+            text-align: center;
+            color: #666;
+            font-size: 0.28rem;
+            padding: 0.3rem 0 0.1rem;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="./static/css/common.css">
+    <script type="text/javascript" src="./static/js/bignumber.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <div class="box">
+        <div class="jun-content">
+            <div class="t_box_pay cp-page">
+                <div class="t_header">
+                    <span>
+                        <img src="./static/img/goback.png" alt="" onClick="javascript:history.back()">
+                    </span>
+                    <span>
+                        <i data-i18n="companyProfile.title">公司简介</i>
+                    </span>
+                </div>
+
+                <div id="loadingBox" class="cp-loading" data-i18n="companyProfile.loading">加载中...</div>
+                <div id="emptyBox" class="cp-empty" style="display:none;" data-i18n="companyProfile.empty">暂无公司简介</div>
+
+                <div id="profileBox" style="display:none;">
+                    <div class="cp-hero" id="heroBox">
+                        <div class="cp-hero-bg" id="heroBg" style="display:none;"></div>
+                        <div class="cp-hero-mask"></div>
+                        <div class="cp-hero-body">
+                            <div class="cp-badge" data-i18n="companyProfile.badge">ABOUT US</div>
+                            <h1 class="cp-title" id="cpTitle"></h1>
+                            <p class="cp-subtitle" id="cpSubtitle"></p>
+                        </div>
+                    </div>
+
+                    <div class="cp-summary" id="cpSummary" style="display:none;"></div>
+
+                    <div class="cp-cards" id="cpCards" style="display:none;">
+                        <div class="cp-card" id="cardVision" style="display:none;">
+                            <div class="cp-card-label" data-i18n="companyProfile.vision">企业愿景</div>
+                            <div class="cp-card-text" id="cpVision"></div>
+                        </div>
+                        <div class="cp-card" id="cardMission" style="display:none;">
+                            <div class="cp-card-label" data-i18n="companyProfile.mission">企业使命</div>
+                            <div class="cp-card-text" id="cpMission"></div>
+                        </div>
+                        <div class="cp-card" id="cardValues" style="display:none;">
+                            <div class="cp-card-label" data-i18n="companyProfile.values">核心价值观</div>
+                            <div class="cp-card-text" id="cpValues"></div>
+                        </div>
+                    </div>
+
+                    <div class="cp-content-wrap" id="contentWrap" style="display:none;">
+                        <div class="cp-content-head" data-i18n="companyProfile.detail">详细介绍</div>
+                        <div class="cp-content" id="cpContent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div><a href="./index.html" class="t_span one"><i></i><span data-i18n="nav.home">首页</span></a></div>
+            <div><a href="./recharge.html" class="t_span two"><i></i><span data-i18n="nav.recharge">充值</span></a></div>
+            <div><a href="./hold.html" class="t_span three"><i></i><span data-i18n="nav.hold">持仓</span></a></div>
+            <div><a onClick="" class="t_span four"><i></i><span data-i18n="nav.customerService">客服</span></a></div>
+            <div><a href="./user.html" class="t_span five router-link-exact-active"><i></i><span data-i18n="nav.my">我的</span></a></div>
+        </div>
+    </div>
+</div>
+
+<script src="./static/js/i18n.js"></script>
+<script src="./static/js/jquery-1.9.1.min.js"></script>
+<script src="./static/js/config.js?v=20260905c"></script>
+<script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+<script type="text/javascript">
+    function showText($el, text) {
+        text = (text || '').trim();
+        if (!text) return false;
+        $el.text(text);
+        $el.closest('.cp-card').show();
+        return true;
+    }
+
+    function extractProfileInfo(res) {
+        if (!res) return null;
+        if (res.data && res.data.info) return res.data.info;
+        if (res.info) return res.info;
+        if (res.data && res.data.title) return res.data;
+        return null;
+    }
+
+    function requestCompanyProfile(urls, index) {
+        index = index || 0;
+        if (index >= urls.length) {
+            return $.Deferred().reject({ info: I18n.t('companyProfile.empty') }).promise();
+        }
+        return AjaxUtil.get(urls[index], { loadingHide: true }).catch(function(err) {
+            return requestCompanyProfile(urls, index + 1);
+        });
+    }
+
+    function renderProfile(info) {
+        $('#profileBox').show();
+        $('#cpTitle').text(info.title || I18n.t('companyProfile.title'));
+
+        if (info.subtitle) {
+            $('#cpSubtitle').text(info.subtitle).show();
+        } else {
+            $('#cpSubtitle').hide();
+        }
+
+        if (info.summary) {
+            $('#cpSummary').text(info.summary).show();
+        }
+
+        if (info.cover_img) {
+            $('#heroBox').addClass('has-cover');
+            var coverUrl = mediaUrl(info.cover_img);
+            var preload = window.preloadImage || function(url) {
+                return new Promise(function(resolve) {
+                    if (!url) return resolve('');
+                    var img = new Image();
+                    img.onload = img.onerror = function() { resolve(url); };
+                    img.src = url;
+                });
+            };
+            preload(coverUrl).then(function() {
+                $('#heroBg').css('background-image', 'url(' + coverUrl + ')').show();
+            });
+        }
+
+        var hasCards = false;
+        if (showText($('#cpVision'), info.vision)) hasCards = true;
+        if (showText($('#cpMission'), info.mission)) hasCards = true;
+        if (showText($('#cpValues'), info.values_text)) hasCards = true;
+        if (hasCards) $('#cpCards').show();
+
+        if (info.content) {
+            $('#cpContent').html(normalizeUploadHtml(info.content));
+            $('#contentWrap').show();
+        }
+    }
+
+    function loadProfile() {
+        var urls = [
+            '/index/index/companyProfile.html',
+            '/index/index/companyProfile',
+            '/index/index/company_profile.html',
+            '/index/index/company_profile'
+        ];
+
+        requestCompanyProfile(urls).then(function(res) {
+            $('#loadingBox').hide();
+            var info = extractProfileInfo(res);
+            if (!info) {
+                $('#emptyBox').text(I18n.t('companyProfile.empty')).show();
+                return;
+            }
+            renderProfile(info);
+        }).catch(function(err) {
+            $('#loadingBox').hide();
+            var msg = (err && (err.info || err.msg)) || I18n.t('companyProfile.empty');
+            $('#emptyBox').text(msg).show();
+        });
+    }
+
+    $(function() {
+        var savedLang = localStorage.getItem('preferredLanguage') || 'zh-CN';
+        Promise.all([
+            I18n.init(savedLang),
+            requestCompanyProfile([
+                '/index/index/companyProfile.html',
+                '/index/index/companyProfile',
+                '/index/index/company_profile.html',
+                '/index/index/company_profile'
+            ])
+        ]).then(function(results) {
+            var res = results[1];
+            $('#loadingBox').hide();
+            var info = extractProfileInfo(res);
+            if (!info) {
+                $('#emptyBox').text(I18n.t('companyProfile.empty')).show();
+                return;
+            }
+            renderProfile(info);
+        }).catch(function(err) {
+            $('#loadingBox').hide();
+            var msg = (err && (err.info || err.msg)) || I18n.t('companyProfile.empty');
+            $('#emptyBox').text(msg).show();
+        });
+
+        $(document).on('languageChanged', function() {
+            I18n.applyTranslations();
+        });
+    });
+</script>
+</body>
+</html>

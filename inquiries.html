@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title data-i18n="inquiries.title">平仓查询</title>
+    <style type="text/css">
+        html { font-size: 35px; }
+        
+    </style>
+    <link rel="stylesheet" type="text/css" href="./static/css/common.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/box_pay.css">
+    <script type="text/javascript" src="./static/js/bignumber.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="box">
+            <div class="jun-content">
+                <div class="f_box_inquiries">
+                    <div class="t_header">
+                        <span>
+                            <i data-i18n="inquiries.title">平仓查询</i>
+                        </span>
+                    </div>
+                    <ul class="f_th" style="">
+                        <li data-i18n="inquiries.productName">商品名称</li>
+                        <li data-i18n="inquiries.amount">金额</li>
+                        <li data-i18n="inquiries.direction">方向</li>
+                        <li data-i18n="inquiries.profitLoss">盈亏</li>
+                    </ul>
+                    <div class="f_table">
+                        <div role="tablist" aria-multiselectable="true" class="el-collapse" id="orderList">
+                            <!-- 订单列表将通过JS动态生成 -->
+                            <div class="loading" data-i18n="inquiries.loading">加载中...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <div>
+                    <a href="./index.html" class="t_span one">
+                        <i></i>
+                        <span data-i18n="nav.home">首页</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./recharge.html" class="t_span two">
+                        <i></i>
+                        <span data-i18n="nav.recharge">充值</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./hold.html" class="t_span three">
+                        <i></i>
+                        <span data-i18n="nav.hold">持仓</span>
+                    </a>
+                </div>
+                <div>
+                    <a onClick="" class="t_span four">
+                        <i></i>
+                        <span data-i18n="nav.customerService">客服</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./user.html" class="t_span five">
+                        <i></i>
+                        <span data-i18n="nav.my">我的</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 添加i18n.js -->
+    <script src="./static/js/i18n.js"></script>
+    <script src="./static/js/jquery-1.9.1.min.js"></script>
+    <script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+    
+    <script type="text/javascript">
+        let is_ajax_list = 0;
+        let page = 1;
+        let isLoading = false;
+        
+        $(function() {
+            // 初始化语言
+            const savedLang = localStorage.getItem('preferredLanguage') || 'zh-CN';
+            I18n.init(savedLang).then(() => {
+                console.log('语言初始化完成:', I18n.currentLang);
+                loadOrderList();
+            });
+            
+            // 监听语言变化
+            $(document).on('languageChanged', function(event, lang) {
+                console.log('语言已切换到:', lang);
+                reloadOrderList();
+            });
+            
+            // 高亮当前导航
+            highlightNav();
+            
+            // 滚动加载更多
+            $(window).scroll(function() {
+                if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+                    loadMoreOrders();
+                }
+            });
+        });
+        
+        function loadOrderList() {
+            if (is_ajax_list == 1 || isLoading) return;
+            
+            is_ajax_list = 1;
+            isLoading = true;
+            page = 1;
+            
+            $('#orderList').html('<div class="loading">' + I18n.t('inquiries.loading') + '</div>');
+            
+            const url = `/index/user/orderlist?status=1&page=${page}`;
+            
+            AjaxUtil.get(url).then(function (res) {
+                if(res.code == 1 && res.data && res.data.list && res.data.list.data) {
+                    const res_list = res.data.list.data;
+                    if (res_list.length > 0) {
+                        renderOrderList(res_list);
+                    } else {
+                        $('#orderList').html('<div class="no-data">' + I18n.t('inquiries.noData') + '</div>');
+                    }
+                } else {
+                    $('#orderList').html('<div class="no-data">' + I18n.t('inquiries.noData') + '</div>');
+                }
+                is_ajax_list = 0;
+                isLoading = false;
+            }, function (error) {
+                console.error('加载订单列表失败:', error);
+                $('#orderList').html('<div class="no-data" style="color:#f56c6c;">加载失败，请重试</div>');
+                is_ajax_list = 0;
+                isLoading = false;
+            });
+        }
+        
+        function loadMoreOrders() {
+            if (is_ajax_list == 1 || isLoading) return;
+            
+            is_ajax_list = 1;
+            isLoading = true;
+            page++;
+            
+            const url = `/index/user/orderlist?status=1&page=${page}`;
+            
+            AjaxUtil.get(url).then(res => {
+                if(res.code == 1 && res.data && res.data.list && res.data.list.data) {
+                    const res_list = res.data.list.data;
+                    if (res_list.length > 0) {
+                        renderOrderList(res_list, true);
+                    } else {
+                        // 没有更多数据了
+                        page--;
+                    }
+                }
+            }, function (error) {
+                console.error('加载更多订单失败:', error);
+                page--;
+            }).always(function () {
+                is_ajax_list = 0;
+                isLoading = false;
+            });
+        }
+        
+        function renderOrderList(orderList, append = false) {
+            let html = '';
+            
+            $.each(orderList, function(k, v) {
+                // 判断交易方向
+                let directionClass, directionText;
+                if (v.ostyle == 0) {
+                    directionClass = "buytop";
+                    directionText = I18n.t('inquiries.buyUp');
+                } else {
+                    directionClass = "buydown";
+                    directionText = I18n.t('inquiries.buyDown');
+                }
+                
+                // 判断盈亏
+                let profitLossClass, profitLossText;
+                if (v.is_win == 1) {
+                    profitLossClass = 'in_money';
+                    profitLossText = "+" + (v.ploss ? parseFloat(v.ploss).toFixed(3) : "0.000");
+                } else if (v.is_win == 2) {
+                    profitLossClass = 'out_money';
+                    profitLossText = v.ploss ? parseFloat(v.ploss).toFixed(3) : "0.000";
+                } else {
+                    profitLossClass = '';
+                    profitLossText = "0.000";
+                }
+                
+                // 格式化金额
+                const amount = v.fee ? "￥" + parseFloat(v.fee).toFixed(2) : "￥0.00";
+                
+                html += `
+                <div class="el-collapse-item" data-id="${v.id || ''}">
+                    <div role="tab" aria-controls="el-collapse-content-${v.id || k}">
+                        <div role="button" tabindex="0" class="el-collapse-item__header">
+                            <i class="el-collapse-item__arrow el-icon-arrow-right"></i>
+                            <span title="${v.ptitle || ''}">${v.ptitle || ''}</span>
+                            <span>${amount}</span>
+                            <span class="${directionClass}">${directionText}</span>
+                            <span class="${profitLossClass}">${profitLossText}</span>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            
+            if (append) {
+                $('#orderList').append(html);
+            } else {
+                $('#orderList').html(html);
+            }
+            
+            // 添加点击事件查看详情
+            $('.el-collapse-item__header').off('click').on('click', function() {
+                const $item = $(this).closest('.el-collapse-item');
+                const orderId = $item.data('id');
+                if (orderId) {
+                    showOrderDetail(orderId);
+                }
+            });
+        }
+        
+        function showOrderDetail(orderId) {
+            // 这里可以添加查看订单详情的逻辑
+            console.log('查看订单详情:', orderId);
+            // 例如：跳转到详情页面或者显示弹窗
+            // window.location.href = `./order_detail.html?id=${orderId}`;
+        }
+        
+        function reloadOrderList() {
+            // 重新加载订单列表，应用新的语言
+            if (!isLoading) {
+                loadOrderList();
+            }
+        }
+        
+        function highlightNav() {
+            var nav = "inquiries";
+            $(".t_span").removeClass("router-link-exact-active");
+            
+            // 由于平仓查询不在底部导航中，我们只高亮"我的"或其他相关导航
+            if (nav == "user" || nav == "inquiries") {
+                $(".five").addClass("router-link-exact-active");
+            }
+            
+            // 如果需要，可以添加其他导航的高亮逻辑
+            /*
+            if (nav == "index") {
+                $(".one").addClass("router-link-exact-active");
+            }
+            if (nav == "recharge") {
+                $(".two").addClass("router-link-exact-active");
+            }
+            if (nav == "hold") {
+                $(".three").addClass("router-link-exact-active");
+            }
+            if (nav == "yeb") {
+                $(".four").addClass("router-link-exact-active");
+            }
+            if (nav == "user") {
+                $(".five").addClass("router-link-exact-active");
+            }
+            */
+        }
+        
+        // 格式化货币函数
+        function formatCurrency(amount) {
+            if (typeof amount !== 'number') {
+                amount = parseFloat(amount) || 0;
+            }
+            return amount.toFixed(2);
+        }
+    </script>
+</body>
+</html>

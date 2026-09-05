@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <title data-i18n="recommend.title">邀请朋友</title>
+    <link rel="stylesheet" type="text/css" href="./static/css/header.css" />
+    <script type="text/javascript" src="./static/js/yatongle.js"></script>
+    <link rel="stylesheet" type="text/css" href="./static/css/iconfont.css" />
+    <style>
+        .header { background: #FF6B6B; } .header .left .icon-arrow-left { color:
+        #fff; } .container { padding: 0; min-height: 100%; background: linear-gradient(to
+        right, #3476fe, #34c7fe); position: relative; /*background-image: url(./static/img/invite_4.png);
+        background-size: 57%; background-repeat: no-repeat; background-position:
+        right bottom;*/ } .top { padding: 0 .3rem; line-height: 0; background-image:
+        url(./static/img/invite_2.png); background-size: 61%; background-repeat:
+        no-repeat; background-position-x: 1.45rem; } .top .timg { width: 100%;
+        } .top .code { width: 3.82rem; height: 3.82rem; margin: 0 auto; margin-top:
+        .5rem; } .top .code img { width: 100%; } .top .tip { font-size: .28rem;
+        line-height: .4rem; color: #FFFFFF; margin-top: .26rem; text-align: center;
+        } .top .saveCode { width: 5.1rem; height: 1.06rem; background-color: #FCCF61;
+        border-radius: .55rem; font-size: .34rem; line-height: 1.06rem; color:
+        #FFFFFF; text-align: center; margin: 0 auto; margin-top: .2rem; } .inviteaward
+        { margin: 0 .4rem; margin-top: .6rem; } .inviteaward .iatop { height: .66rem;
+        padding: 0 .3rem; background-color: #F6F6F6; border-top-left-radius: 6px;
+        border-top-right-radius: 6px; } .inviteaward .iatop .left { font-size:
+        .3rem; line-height: .66rem; color: #3A3A3A; float: left; } .inviteaward
+        .iatop .right { font-size: .24rem; line-height: .66rem; color: #9C999A;
+        float: right; } .inviteaward .iatop .right .icon-arrow-right { font-size:
+        .24rem; line-height: .66rem; color: #979797; float: right; } .inviteaward
+        .list { height: .8rem; padding: .24rem 0; display: -webkit-flex; display:
+        flex; background-color: #FFF; border-bottom-left-radius: 6px; border-bottom-right-radius:
+        6px; } .inviteaward .list .item { flex: 1; border-right: 1px solid #EEEEEE;
+        text-align: center; } .inviteaward .list .item:last-child { border-right:
+        0; } .inviteaward .list .item { font-size: .24rem; line-height: .72rem;
+        color: #3A3A3A; } .inviteaward .list .item .num { font-size: .72rem; line-height:
+        .72rem; color: #FA493B; font-weight: bolder; letter-spacing: -6px; } .inviteaward
+        .list .item .unit { font-size: .24rem; line-height: .72rem; color: #FA493B;
+        } /* rule CSS */ .rule { padding: 0 .4rem; margin-top: .4rem; font-size:
+        0; } .rule .rtitle { display: inline-block; font-size: .24rem; line-height:
+        .34rem; color: #FFFFFF; padding: .08rem .16rem; border-radius: .22rem;
+        background-color: #FF9898; } .rule .cont { margin-top: .4rem; padding-bottom:
+        .56rem; } .rule .cont p { font-size: .28rem; line-height: .40rem; color:
+        #FFFFFF; } .rule .cont p span { font-size: .48rem; line-height: .6rem;
+        color: #FFFFFF; font-weight: bolder; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="left" onclick="window.history.back()">
+                <i class="iconfont icon-arrow-left"></i>
+            </div>
+        </div>
+        <div class="top">
+            <img src="./static/img/invite_1.png" alt="" class="timg" />
+            <div class="code" id="qrcode"></div>
+            <p class="tip" data-i18n="recommend.qrHint">好友扫描二维码可直接注册</p>
+            <div class="saveCode" style="color:blue">
+                <span data-i18n="recommend.inviteId">您的邀请ID:</span> <span id="spread_code"></span>
+            </div>
+        </div>
+        <div class="inviteaward">
+            <div class="iatop">
+                <div class="left" data-i18n="recommend.myRewards">我的邀请奖励</div>
+                <div class="right">
+                    <a href="./extend.html">
+                        <span data-i18n="recommend.viewInvites">查看我的邀请</span>
+                    </a>
+                    <i class="iconfont icon-arrow-right"></i>
+                </div>
+            </div>
+        </div>
+        <div class="rule">
+            <div class="rtitle" data-i18n="recommend.rules">邀请规则</div>
+            <div class="cont">
+                <p data-i18n="recommend.rule1">1.本活动永久有效，欢迎参与</p>
+                <p data-i18n="recommend.rule2">2.推荐名额可累计计算</p>
+                <p data-i18n="recommend.rule3">3.满足条件后，请联系在线客服申请奖励</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 添加i18n.js -->
+    <script src="./static/js/i18n.js"></script>
+    <script type="text/javascript" src="./static/js/font.js"></script>
+    <script type="text/javascript" src="./static/js/jquery-1.9.1.min.js"></script>
+    <script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+    <script src="./static/js/utils.js"></script>
+    <script type="text/javascript" src="./static/js/qrcode.js"></script>
+    
+    <script type="text/javascript">
+        $(function(){
+            // 初始化语言
+            const savedLang = localStorage.getItem('preferredLanguage') || 'zh-CN';
+            I18n.init(savedLang).then(() => {
+                loadUserData();
+            });
+            
+            // 监听语言变化
+            $(document).on('languageChanged', function(event, lang) {
+                loadUserData();
+            });
+        });
+        
+        async function loadUserData() {
+            var userInfo = await getUserInfo();
+            $("#spread_code").text(userInfo.id);
+            
+            // 清除之前的二维码
+            $("#qrcode").empty();
+            
+            // 生成新的二维码
+            var qrcode = new QRCode('qrcode', {
+                text: location.origin + "/reg.html?spread_code=" + userInfo.id,
+                width: '100',
+                height: '100',
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+    </script>
+</body>
+</html>

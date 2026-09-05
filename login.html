@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <title data-i18n="login.loginButton">会员登录</title>
+    <style type="text/css">
+        html { font-size: 40px; }
+        .t_box_login{
+            position: relative;
+        }
+        .language-switcher {
+            position: absolute;
+            width: 106px;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            background: #095387;
+            padding: 8px 10px;
+            border-radius: 5px;
+            color: #fff;
+            justify-content: space-around;
+            cursor: pointer;
+        }
+        #langList{
+            position: absolute;
+            top: 63px;
+            width: 106px;
+            right: 20px;
+            background: #095387;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1000;
+            display: none;
+        }
+        #langList span {
+            padding: 5px 0;
+            display: block;
+            cursor: pointer;
+        }
+        #langList span:hover {
+            background: rgba(255,255,255,0.1);
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="./static/css/common.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/login.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/tipmask.css">
+</head>
+<body>
+    <form action="" method="post" id="logins">
+        <div id="app">
+            <div class="t_box_login" style="background-image: url('./static/img/background.png'); background-repeat: no-repeat;">
+                <div class="language-switcher">
+                    <img width="20px" src="./static/img/icon_lang.png" alt="">
+                    <span onclick="$('#langList').show();" data-i18n="language">language</span>
+                </div>
+                <div id="langList" style="display: none;">
+                    <div style="display: flex;flex-direction: column;">
+                        <span onclick="I18n.changeLanguage('zh-CN');$('#langList').hide();" data-i18n-value="common.zh">简体中文</span>
+                        <span onclick="I18n.changeLanguage('en-US');$('#langList').hide();" data-i18n-value="common.en">English</span>
+                        <span onclick="I18n.changeLanguage('th-TH');$('#langList').hide();" data-i18n-value="common.th">ภาษาไทย</span>
+                    </div>
+                </div>
+                <div class="t_logo">
+                    <img src="" alt="logo">
+                </div>
+                <div class="login_box">
+                    <ul>
+                        <li>
+                            <i></i>
+                            <input type="text" 
+                                   data-i18n-placeholder="login.usernamePlaceholder" 
+                                   placeholder="请输入用户名" 
+                                   name="account" 
+                                   id="phonenumber">
+                        </li>
+                        <li>
+                            <i></i>
+                            <input type="password" 
+                                   data-i18n-placeholder="login.passwordPlaceholder" 
+                                   placeholder="请输入密码" 
+                                   name="password" 
+                                   id="password">
+                        </li>
+                        <li>
+                            <input type="button" 
+                                   value="登陆" 
+                                   id="login_btn"
+                                   data-i18n-value="login.loginButton">
+                        </li>
+                        <li>
+                            <input type="button" 
+                                   value="会员注册" 
+                                   id="reg_btn"
+                                   data-i18n-value="login.registerLink">
+                        </li>
+                    </ul>
+                    <p style="padding: 0 10% 50px 10%">
+                        <a href="javascript:;" onclick="alert('忘记密码请联系客服！')" style="float:left" data-i18n="login.forgotPassword">
+                            忘记密码？
+                        </a>
+                        <a href="" id="service" target="_blank" style="float:right" data-i18n="login.customerService">
+                            在线客服
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="tipMask hide">
+        <div class="cont">
+            <p class="title" data-i18n="common.prompt">温馨提示</p>
+            <p class="stitle contents"></p>
+            <div id="msgBtn">
+                <div class="confirm guanbi" style="background-color:#33B497;" data-i18n="common.confirm">
+                    确定
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="./static/js/jquery-1.9.1.min.js"></script>
+    <script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+    <script src="./static/js/i18n.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            // 初始化语言
+            const savedLang = localStorage.getItem('preferredLanguage') || 'zh-CN';
+            I18n.init(savedLang).then(() => {
+                console.log('语言初始化完成:', I18n.currentLang);
+                
+                // 点击其他地方关闭语言选择器
+                $(document).click(function(e) {
+                    if (!$(e.target).closest('.language-switcher').length && 
+                        !$(e.target).closest('#langList').length) {
+                        $('#langList').hide();
+                    }
+                });
+            });
+            // LOGO、客服链接由 ajaxUtil.js 内 getConfigInfo 统一设置
+            // 注册按钮点击
+            $('#reg_btn').click(function() {
+                window.location.href = './reg.html';
+            });
+
+            // 登录按钮点击
+            $('#login_btn').click(function() {
+                const phone = $('#phonenumber').val().trim();
+                const password = $('#password').val().trim();
+                
+                if (!phone) {
+                    msg(I18n.t('common.prompt'), I18n.t('login.usernameError'), 1);
+                    return;
+                }
+                
+                if (!password) {
+                    msg(I18n.t('common.prompt'), I18n.t('login.passwordError'), 1);
+                    return;
+                }
+                
+                const options = {
+                    phone: phone,
+                    password: password
+                };
+                
+                AjaxUtil.post('/index/login', options).then(res => {
+                    console.log(res, 'login response');
+                    if(res.code == 1) {
+                        window.localStorage.setItem('token', res.data.token);
+                        msg(I18n.t('common.prompt'), I18n.t('login.loginSuccess'), 2, "./user.html");
+                    } else {
+                        msg(I18n.t('common.prompt'), res.info || I18n.t('login.loginFailure'), 1);
+                    }
+                }, function (error) {
+                    console.error('Login error:', error);
+                    var message = I18n.t('login.loginFailure');
+                    if (error && (error.info || error.msg)) {
+                        message = error.info || error.msg;
+                    } else if (error && error.responseJSON && (error.responseJSON.info || error.responseJSON.msg)) {
+                        message = error.responseJSON.info || error.responseJSON.msg;
+                    } else if (error && error.status === 0) {
+                        message = '无法连接服务器，请检查网络后重试';
+                    }
+                    msg(I18n.t('common.prompt'), message, 1);
+                });
+            });
+        });
+        
+        function msg(title, content, type, url) {
+            $(".title").text(title);
+            $(".contents").html(content);
+            if (type == 1) {
+                var btn = '<div class="confirm guanbi" style="background-color:#33B497;" onclick="$(\'.tipMask\').hide();">' + I18n.t('common.confirm') + '</div>';
+            } else {
+                var btn = '<div class="confirm guanbi" style="background-color:#33B497;" onclick="window.location.href=\'' + url + '\'">' + I18n.t('common.confirm') + '</div>';
+            }
+            $("#msgBtn").html(btn);
+            $(".tipMask").show();
+        }
+    </script>
+</body>
+</html>

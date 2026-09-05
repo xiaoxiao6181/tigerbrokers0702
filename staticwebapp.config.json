@@ -1,0 +1,12 @@
+{
+  "navigationFallback": {
+    "rewrite": "/login.html",
+    "exclude": ["/static/*", "/*.css", "/*.js", "/*.png", "/*.jpg", "/*.jpeg", "/*.gif", "/*.ico", "/*.json", "/lang/*"]
+  },
+  "globalHeaders": {
+    "Cache-Control": "no-cache"
+  },
+  "mimeTypes": {
+    ".json": "application/json"
+  }
+}

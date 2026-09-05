@@ -1,0 +1,288 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title data-i18n="recharge.title">充值</title>
+    <style type="text/css">
+        html { font-size: 35px; }
+        select {
+            width: 100%;
+            background: none;
+            border: none;
+            outline: none;
+            color: #fff;
+            background: #111723;
+            font-size: .4rem;
+            height: 100%;
+            width: 60%;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="./static/css/common.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/tipmask.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/box_pay.css">
+    <script type="text/javascript" src="./static/js/bignumber.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="box">
+            <div class="jun-content">
+                <div class="t_box_pay">
+                    <div class="t_header">
+                        <span>
+                            <img src="./static/img/goback.png" alt="" onClick="javascript:history.back()">
+                        </span>
+                        <span>
+                            <i data-i18n="recharge.title">充值</i>
+                        </span>
+                    </div>
+                    <div class="t_con_pay">
+                        <div class="t_money">
+                            <i></i>
+                            <label data-i18n="recharge.tip">温馨提示：确认转账成功后再进行充值金额提交</label>
+                        </div>
+                        <div class="payment othermon">
+                            <ul>
+                                <li>
+                                    <span style="color: #fff;margin:0 .2rem;width: 80px;" data-i18n="recharge.paymentMethod">支付方式：</span>
+                                    <select name="pay_id" id="pay_id" style="padding-left:5px;background: #181f2f;color:#fff"></select>
+                                </li>
+                                <li class="usdt">
+                                    <span style="color: #fff;margin:0 .2rem;width: 80px;" data-i18n="recharge.walletAddress">钱包地址：</span>
+                                    <input type="text" id="usdt" value="" readonly style="padding-left:5px;background: #181f2f;color:#fff">
+                                </li>
+                                <li>
+                                    <span style="color: #fff;margin:0 .2rem;width: 80px;" data-i18n="recharge.rechargeAmount">充值金额：</span>
+                                    <input type="text" 
+                                           id="money" 
+                                           value="" 
+                                           style="padding-left:5px;background: #181f2f;color:#fff"
+                                           data-i18n-placeholder="recharge.rechargeAmountPlaceholder"
+                                           placeholder="请输入充值金额">
+                                </li>
+                                <li>
+                                    <span style="color: #fff;margin:0 .2rem;width: 80px;" data-i18n="recharge.rechargeName">充值姓名：</span>
+                                    <input type="text"
+                                           id="recharge_name"
+                                           value=""
+                                           style="padding-left:5px;background: #181f2f;color:#fff"
+                                           data-i18n-placeholder="recharge.rechargeNamePlaceholder"
+                                           placeholder="请输入充值姓名">
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="t_pay_btn">
+                            <button id="sub_btn" value="" type="button" data-i18n="recharge.rechargeButton">
+                                充值
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <div>
+                    <a href="./index.html" class="t_span one">
+                        <i></i>
+                        <span data-i18n="nav.home">首页</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./recharge.html" class="t_span two">
+                        <i></i>
+                        <span data-i18n="nav.recharge">充值</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./hold.html" class="t_span three">
+                        <i></i>
+                        <span data-i18n="nav.hold">持仓</span>
+                    </a>
+                </div>
+                <div>
+                    <a onClick="" class="t_span four">
+                        <i></i>
+                        <span data-i18n="nav.customerService">客服</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./user.html" class="t_span five">
+                        <i></i>
+                        <span data-i18n="nav.my">我的</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tipMask hide">
+        <div class="cont">
+            <p class="title" data-i18n="common.prompt">温馨提示</p>
+            <p class="stitle contents"></p>
+            <div id="msgBtn">
+                <div class="confirm guanbi" data-i18n="common.confirm">确定</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 添加i18n.js -->
+    <script src="./static/js/i18n.js"></script>
+    <script src="./static/js/jquery-1.9.1.min.js"></script>
+    <script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+    <script type="text/javascript" src="./static/js/layer.js"></script>
+    
+    <script type="text/javascript">
+        $(function() {
+            // 初始化语言
+            const savedLang = localStorage.getItem('preferredLanguage') || 'zh-CN';
+            I18n.init(savedLang).then(() => {
+                console.log('语言初始化完成:', I18n.currentLang);
+                updateUIText();
+                loadPaymentData();
+            });
+            
+            // 监听语言变化
+            $(document).on('languageChanged', function(event, lang) {
+                console.log('语言已切换到:', lang);
+                updateUIText();
+            });
+            
+            // 高亮当前导航
+            var nav = "recharge";
+            highlightNav(nav);
+            
+            // 支付方式变更
+            $('#pay_id').change(function() {
+                const selectedOption = $(this).find('option:selected');
+                let data = selectedOption.data('item');
+                
+                if(!data) {
+                    try {
+                        data = JSON.parse(selectedOption.attr('data-item'));
+                    } catch(e) {
+                        console.error('解析支付方式数据失败:', e);
+                        return;
+                    }
+                }
+                
+                if(data.usdt && data.usdt.trim() !== '') {
+                    $(".usdt").show();
+                } else {
+                    $(".usdt").hide();
+                }
+                
+                $("#usdt").val(data.usdt || '');
+            });
+            
+            // 提交充值
+            $("#sub_btn").on("click", function() {
+                const money = parseFloat($("#money").val());
+                const payId = $("#pay_id").val();
+                const rechargeName = $("#recharge_name").val().trim();
+                
+                if(!payId) {
+                    msg(I18n.t('common.prompt'), I18n.t('recharge.validation.selectPaymentMethod'), 1);
+                    return false;
+                }
+                
+                if(!money || isNaN(money) || money <= 0) {
+                    msg(I18n.t('common.prompt'), I18n.t('recharge.validation.enterAmount'), 1);
+                    return false;
+                }
+
+                if(!rechargeName) {
+                    msg(I18n.t('common.prompt'), I18n.t('recharge.validation.enterName'), 1);
+                    return false;
+                }
+                
+                const options = {
+                    money: money.toFixed(2),
+                    pay_id: payId,
+                    name: rechargeName
+                };
+                
+                AjaxUtil.get('/index/user/submitRecharge', options).then(result => {
+                    if (result.code == 1) {
+                        msg(I18n.t('common.prompt'), result.info, 2, "./recharge_record.html");
+                    } else {
+                        msg(I18n.t('common.prompt'), result.info || I18n.t('recharge.validation.amountError'), 1);
+                    }
+                }, error => {
+                    console.error('提交充值失败:', error);
+                    msg(I18n.t('common.prompt'), I18n.t('recharge.validation.amountError'), 1);
+                });
+            });
+        });
+        
+        function loadPaymentData() {
+            AjaxUtil.get('/index/index/getPayMentList').then(res => {
+                if(res.code == 1) {
+                    let pay_Html = '';
+                    $.each(res.data.list, function (index, item) {
+                        pay_Html += `<option value="${item.id}" data-item='${JSON.stringify(item)}'>${item.title}</option>`;
+                    });
+                    $("#pay_id").html(pay_Html);
+                    
+                    if(res.data.list.length > 0) {
+                        const firstItem = res.data.list[0];
+                        $("#usdt").val(firstItem.usdt || '');
+                        
+                        if(firstItem.usdt && firstItem.usdt.trim() !== '') {
+                            $(".usdt").show();
+                        } else {
+                            $(".usdt").hide();
+                        }
+                        
+                        // 触发change事件以更新显示
+                        $('#pay_id').trigger('change');
+                    }
+                }
+            })
+        }
+        
+        function updateUIText() {
+            if (typeof I18n !== 'undefined' && I18n.applyTranslations) {
+                I18n.applyTranslations();
+            }
+        }
+        
+        function highlightNav(nav) {
+            $(".t_span").removeClass("router-link-exact-active");
+            if (nav == "index") {
+                $(".one").addClass("router-link-exact-active");
+            }
+            if (nav == "recharge") {
+                $(".two").addClass("router-link-exact-active");
+            }
+            if (nav == "hold") {
+                $(".three").addClass("router-link-exact-active");
+            }
+            if (nav == "yeb") {
+                $(".four").addClass("router-link-exact-active");
+            }
+            if (nav == "user") {
+                $(".five").addClass("router-link-exact-active");
+            }
+        }
+        
+        function msg(title, content, type, url) {
+            $(".title").text(title);
+            $(".contents").html(content);
+            
+            let btn = '';
+            if (type == 1) {
+                btn = '<div class="confirm guanbi" onclick="$(\'.tipMask\').hide();">' + I18n.t('common.confirm') + '</div>';
+            } else {
+                btn = '<div class="confirm guanbi" onclick="window.location.href=\'' + url + '\'">' + I18n.t('common.confirm') + '</div>';
+            }
+            
+            $("#msgBtn").html(btn);
+            $(".tipMask").show();
+        }
+    </script>
+</body>
+</html>

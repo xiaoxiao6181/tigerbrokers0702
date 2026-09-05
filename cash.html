@@ -1,0 +1,432 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"
+		name="viewport">
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta content="black" name="apple-mobile-web-app-status-bar-style">
+		<meta content="telephone=no" name="format-detection">
+		<meta content="email=no" name="format-detection">
+		<title>
+			提现
+		</title>
+		<style type="text/css">
+			html { font-size: 35px; }
+		</style>
+		<link rel="stylesheet" type="text/css" href="./static/css/common.css">
+		<script type="text/javascript" src="./static/js/bignumber.min.js">
+		</script>
+	</head>
+	<body>
+		<link rel="stylesheet" type="text/css" href="./static/css/tipmask.css">
+		<link rel="stylesheet" type="text/css" href="./static/css/box_pay.css">
+		<style type="text/css">
+			span { display: inline-block; }
+		</style>
+		<div id="app">
+			<div class="box">
+				<!---->
+				<div class="jun-content">
+					<div class="t_box_withdraw">
+						<div class="t_header">
+							<span>
+								<img src="./static/img/goback.png" alt="" onClick="javascript:history.back()">
+							</span>
+							<span>
+								<i>
+									提现
+								</i>
+							</span>
+						</div>
+						<div class="t_con_withdraw">
+							<div>
+								<label>
+									收款方式
+								</label>
+								<div class="select">
+									<select name="pay_id" id="pay_id" style="width: 100%;background: none;border: none;color: #fff;background: #111723;">
+										
+									</select>
+								</div>
+							</div>
+							<div>
+								<label class="pay_type_label">
+									银行卡号
+								</label>
+								<input type="text" readonly  id="bankInfo"></input>
+							</div>
+							<div>
+								<label for="myMoney">
+									用户余额
+								</label>
+								<input type="text" id="myMoney" disabled="disabled" value="109366.20">
+								<span class="r_span r_span1">
+									√
+								</span>
+							</div>
+							<div>
+								<label for="withdraw">
+									提现金额
+								</label>
+								<input type="number" placeholder="请输入提现金额" id="money" onfocus="this.placeholder=''"
+								 onblur="this.placeholder='请输入提现金额'">
+							</div>
+							<div>
+								<label for="withdraw">
+									手续费
+								</label>
+								<input type="text" disabled="true" readonly placeholder="手续费" id="sxf" onfocus="this.placeholder=''">
+							</div>
+							
+							<div>
+								<label for="withdraw">
+									提现密码
+								</label>
+								<input type="password" placeholder="请输入提现密码" id="pwd" onfocus="this.placeholder=''"
+								onblur="this.placeholder='请输入提现密码'">
+							</div>
+							
+							<span class="notice">
+								<p>
+									提示：
+								</p>
+								<p>
+                                    1.提现限制：<span id="moneyRange">20 - 50000000</span>
+                                </p>
+                                <p style="color:red;">
+                                    2.提现时间：<span id="timeRange">09:00 - 23:00</span>
+                                </p>
+                                <p>
+                                    3.每日提现次数：<span id="cashMaxNum">--</span> 次
+                                </p>
+								<p>
+									4.若忘记提款密码，请
+									<a target="_blank" class="kefu" style="color:red;">
+										点击找回
+									</a>
+								</p>
+							</span>
+							<div class="t_withdraw_btn">
+								<button id="sub_btn" onclick="postWithdraw()" type="button">
+									确认提交
+								</button>
+								<button id="add_btn" type="button">
+									增加支付方式
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="footer">
+					<div>
+						<a href="./index.html" class="t_span one">
+							<i>
+							</i>
+							<span>
+								首页
+							</span>
+						</a>
+					</div>
+					<div>
+						<a href="./recharge.html" class="t_span two">
+							<i>
+							</i>
+							<span>
+								充值
+							</span>
+						</a>
+					</div>
+					<div>
+						<a href="./hold.html" class="t_span three">
+							<i>
+							</i>
+							<span>
+								持仓
+							</span>
+						</a>
+					</div>
+					<!--<div><a href="/index/user/yeb" class="t_span four"><i></i><span>余额宝</span></a></div>-->
+					<div>
+						<a onClick=""
+						class="t_span four">
+							<i>
+							</i>
+							<span>
+								客服
+							</span>
+						</a>
+					</div>
+					<div>
+						<a href="./user.html" class="t_span five">
+							<i>
+							</i>
+							<span>
+								我的
+							</span>
+						</a>
+					</div>
+				</div>
+				<script type="text/javascript" src="./static/js/jquery-1.9.1.min.js">
+				</script>
+				<script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+				<script src="./static/js/utils.js"></script>
+				<script type="text/javascript">
+					let bankCard=JSON.parse(localStorage.getItem('bankCard'))
+					let userInfo={}
+					let backList=[]
+					var pay_id=0
+					var activeBank={}
+					let cashConfig = {}
+					let todayCashCount = 0
+					function getCashConfig() {
+						return cashConfig || {};
+					}
+					async function loadTodayCashCount() {
+						try {
+							const res = await AjaxUtil.get('/index/user/cash_record', { loadingHide: true });
+							if (res.code == 1 && res.data && res.data.cash) {
+								todayCashCount = getTodayCashCount(res.data.cash);
+							}
+						} catch (e) {
+							todayCashCount = 0;
+						}
+					}
+					function checkCashMaxNumLimit(showTip) {
+						const maxNum = getCashConfig().cash_max_num;
+						if (!isCashCountExceeded(todayCashCount, maxNum)) {
+							return true;
+						}
+						if (showTip) {
+							showCashMaxNumTip(maxNum);
+						}
+						return false;
+					}
+					function checkCashTimeLimit(showTip) {
+						const config = getCashConfig();
+						if (!config.cash_start || !config.cash_end) {
+							return true;
+						}
+						if (isWithinCashTime(config.cash_start, config.cash_end)) {
+							return true;
+						}
+						if (showTip) {
+							showCashTimeLimitTip(config.cash_start, config.cash_end);
+						}
+						return false;
+					}
+					function applyCashConfig(config) {
+						if (!config) return;
+						cashConfig = config;
+						if (config.cash_min !== undefined && config.cash_max !== undefined) {
+							$("#moneyRange").text(config.cash_min + ' - ' + config.cash_max);
+						}
+						if (config.cash_start && config.cash_end) {
+							$("#timeRange").text(config.cash_start + ' - ' + config.cash_end);
+						}
+						if (config.cash_max_num !== undefined && config.cash_max_num !== null && config.cash_max_num !== '') {
+							$("#cashMaxNum").text(config.cash_max_num);
+						}
+					}
+					function getRateMoney(){
+						if(!activeBank.id){
+							return
+						}
+						const price = $('#money').val();
+						let options = {
+							bank_id:activeBank.id,
+							money:$('#money').val()
+						}
+					
+						AjaxUtil.get('/index/user/countCashRateMoney',options).then(res => {
+						    if(res.code == 1){
+						        // 处理成功响应
+								$("#sxf").val(res.data.rate_money)
+						    } else {
+						        // 处理错误
+						        console.error('获取失败:', res.info);
+						    }
+						})
+					}
+					function debounce(func, delay) {
+					    let timeoutId;
+					    return function() {
+					        const context = this;
+					        const args = arguments;
+					        
+					        clearTimeout(timeoutId);
+					        timeoutId = setTimeout(() => {
+					            func.apply(context, args);
+					        }, delay);
+					    };
+					}
+					function postWithdraw(){
+						if (!checkCashTimeLimit(true)) {
+							return;
+						}
+						if (!checkCashMaxNumLimit(true)) {
+							return;
+						}
+						let money=$("#money").val()
+						let pwd=$("#pwd").val().trim()
+						if(!money){
+							msg("提示", '请输入提现金额', 1);
+			
+							return
+						}
+						if(!pwd){
+							msg("提示", '请输入提现密码', 1);
+			
+							return
+						}
+						if(!activeBank.id){
+							msg("提示", '收款方式未绑定', 1);
+			
+							return
+						}
+						let options={
+							money:money,
+							bank_id:activeBank.id,
+							pwd:pwd,
+							pay_id
+						}
+						AjaxUtil.post('/index/user/submitCash', options).then(
+							function(res) {
+								msg("提示", res.info, 2, "./cash_record.html");
+							},
+							function(err) {
+								const maxNum = getCashConfig().cash_max_num;
+								const message = (err && (err.info || err.msg)) || '提交失败，请稍后重试';
+								if (maxNum && isCashCountExceeded(todayCashCount, maxNum)) {
+									showCashMaxNumTip(maxNum);
+								} else if (maxNum && message && String(message).indexOf('次') !== -1) {
+									showCashMaxNumTip(maxNum);
+								} else {
+									msg("提示", message, 1);
+								}
+							}
+						);
+					}
+		
+					$( function() {
+						(async function() {
+				
+							userInfo=await getUserInfo()
+							$("#myMoney").val(userInfo.money)
+							cashConfig = await loadSiteConfig()
+							applyCashConfig(cashConfig)
+							await loadTodayCashCount()
+							checkCashTimeLimit(true)
+							checkCashMaxNumLimit(true)
+							AjaxUtil.get('/index/user/getUserBankList').then(res => {
+								if(res.code==1){
+									bankCard=res.data.list
+									if(bankCard.length>0){
+										
+										$("#sub_btn").show()
+										$("#add_btn").hide()
+										
+										AjaxUtil.get('/index/index/getPayMentList').then(res => {
+											let pay_Html=''
+											$.each(res.data.list, function (index, item) {
+												pay_Html+=`<option value="${item.id}" data-item='${JSON.stringify(item)}'>${item.title}</option>`
+											})
+											$("#pay_id").html(pay_Html)	
+											
+											pay_id=bankCard[0].pay_id
+											console.log(pay_id)
+											$("#pay_id").val(pay_id)
+															
+											activeBank=bankCard[0]
+											if(res.data.list[0].type==2){
+												$("#pay_type_label").text('钱包地址')
+											}else{
+												$("#pay_type_label").text('银行卡号')
+											}
+											
+									
+											$("#bankInfo").val(maskString(bankCard[0].account||bankCard[0].usdt))	
+										})
+										$('#pay_id').change(function() {
+											$("#bankInfo").val('')
+											activeBank={}
+											const selectedOption = $(this).find('option:selected');
+											let data=selectedOption.data('item')
+											pay_id=data.id
+											backList=bankCard.filter(item=>item.pay_id==pay_id)
+											if(data.type==2){
+												$("#pay_type_label").text('钱包地址')
+											}else{
+												$("#pay_type_label").text('银行卡号')
+											}
+											console.log('backList',backList)
+											if(backList.length==0){
+												msg("提示", '当前支付方式未绑定请绑定', 2, "./add_card.html");
+										
+												return 
+											}
+											activeBank=backList[0]
+											$("#bankInfo").val(maskString(backList[0].account||backList[0].usdt))	
+											getRateMoney()
+										});
+									}else{
+										if(backList.length==0){
+											msg("提示", '请先绑定银行卡', 2, "./add_card.html");
+											return 
+										}
+										$("#submit").hide()
+										$("#add").show()
+									}
+								}
+							})
+							
+							$("#money").on('input', debounce(function() {
+									
+								getRateMoney()
+							}, 500));
+							
+							
+							var nav = "user";
+							if (nav == "index") {
+								$(".one").addClass("router-link-exact-active");
+							}
+							if (nav == "recharge") {
+								$(".two").addClass("router-link-exact-active");
+							}
+							if (nav == "hold") {
+								$(".three").addClass("router-link-exact-active");
+							}
+							if (nav == "yeb") {
+								$(".four").addClass("router-link-exact-active");
+							}
+							if (nav == "user") {
+								$(".five").addClass("router-link-exact-active");
+							}
+						})();
+					});
+				</script>
+			</div>
+		</div>
+		<div class="tipMask hide">
+			<div class="cont">
+				<p class="title">
+					温馨提示
+				</p>
+				<p class="stitle contents">
+				</p>
+				<div id="msgBtn">
+					<div class="confirm guanbi">
+						确定
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+
+	<script type="text/javascript">
+	
+		
+	</script>
+
+</html>

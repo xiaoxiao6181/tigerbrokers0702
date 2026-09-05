@@ -1,0 +1,237 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title data-i18n="set_account.changePaymentPassword">设置密码</title>
+    <style type="text/css">
+        html { font-size: 35px; }
+    </style>
+    <link rel="stylesheet" type="text/css" href="./static/css/common.css">
+    <script type="text/javascript" src="./static/js/bignumber.min.js"></script>
+</head>
+<body>
+    <link rel="stylesheet" type="text/css" href="./static/css/tipmask.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/box_pay.css">
+    <div id="app">
+        <div class="box">
+            <div class="jun-content">
+                <div class="f_box_addbank">
+                    <div class="t_header">
+                        <span>
+                            <img src="./static/img/goback.png" alt="" onClick="javascript:history.back()">
+                        </span>
+                        <span>
+                            <i data-i18n="set_account.changePaymentPassword">修改支付密码</i>
+                        </span>
+                    </div>
+                    <div class="f_content">
+                        <ul>
+                            <li>
+                                <label data-i18n="set_account.oldPaymentPassword">原支付密码</label>
+                                <span>
+                                    <input type="password" name="oldpwd" id="oldpwd" value="" 
+                                           data-i18n-placeholder="set_account.oldPaymentPasswordPlaceholder"
+                                           placeholder="输入原支付密码">
+                                </span>
+                            </li>
+                            <li>
+                                <label data-i18n="set_account.newPaymentPassword">新支付密码</label>
+                                <span>
+                                    <input type="password" name="pwd" id="pwd" value="" 
+                                           data-i18n-placeholder="set_account.newPaymentPasswordPlaceholder"
+                                           placeholder="输入新支付密码">
+                                </span>
+                            </li>
+                            <li>
+                                <label data-i18n="set_account.confirmPaymentPassword">确认密码</label>
+                                <span>
+                                    <input type="password" name="pwd2" id="pwd2" value="" 
+                                           data-i18n-placeholder="set_account.confirmPaymentPasswordPlaceholder"
+                                           placeholder="输入确认密码">
+                                </span>
+                            </li>
+                        </ul>
+                        <div class="sure">
+                            <button id="sub_btn" type="button" class="el-button el-button--danger" 
+                                    data-i18n="set_account.confirmButton">
+                                确认
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <div>
+                    <a href="./index.html" class="t_span one">
+                        <i></i>
+                        <span data-i18n="nav.home">首页</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./recharge.html" class="t_span two">
+                        <i></i>
+                        <span data-i18n="nav.recharge">充值</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./hold.html" class="t_span three">
+                        <i></i>
+                        <span data-i18n="nav.hold">持仓</span>
+                    </a>
+                </div>
+                <div>
+                    <a onClick="" class="t_span four">
+                        <i></i>
+                        <span data-i18n="nav.customerService">客服</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./user.html" class="t_span five">
+                        <i></i>
+                        <span data-i18n="nav.my">我的</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tipMask hide">
+        <div class="cont">
+            <p class="title" data-i18n="common.prompt">温馨提示</p>
+            <p class="stitle contents"></p>
+            <div id="msgBtn">
+                <div class="confirm guanbi" data-i18n="common.confirm">确定</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 添加i18n.js -->
+    <script src="./static/js/i18n.js"></script>
+    <script src="./static/js/jquery-1.9.1.min.js"></script>
+    <script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+    <script src="./static/js/utils.js"></script>
+    
+    <script type="text/javascript">
+        $(function() {
+            // 初始化语言
+            const savedLang = localStorage.getItem('preferredLanguage') || 'zh-CN';
+            I18n.init(savedLang).then(() => {
+                console.log('语言初始化完成:', I18n.currentLang);
+                setupEventListeners();
+                updateUIText();
+            });
+            
+            // 监听语言变化
+            $(document).on('languageChanged', function(event, lang) {
+                console.log('语言已切换到:', lang);
+                updateUIText();
+            });
+            
+            // 高亮当前导航
+            highlightNav();
+            
+            // 确保提示框的确定按钮有翻译
+            setTimeout(() => {
+                $('.confirm.guanbi').text(I18n.t('common.confirm'));
+            }, 100);
+        });
+        
+        function setupEventListeners() {
+            $("#sub_btn").on("click", function() {
+                var oldpwd = $("#oldpwd").val();
+                var pwd = $("#pwd").val();
+                var pwd2 = $("#pwd2").val();
+                
+                // 验证原支付密码
+                if (oldpwd.length < 6 || oldpwd.length > 16) {
+                    msg(I18n.t('common.prompt'), I18n.t('set_account.oldPaymentPasswordRule'), 1);
+                    return false;
+                }
+                
+                // 验证新支付密码
+                if (pwd.length < 6 || pwd.length > 16) {
+                    msg(I18n.t('common.prompt'), I18n.t('set_account.newPaymentPasswordRule'), 1);
+                    return false;
+                }
+                
+                // 验证确认密码
+                if (pwd2.length < 6 || pwd2.length > 16) {
+                    msg(I18n.t('common.prompt'), I18n.t('set_account.confirmPaymentPasswordRule'), 1);
+                    return false;
+                }
+                
+                // 验证两次密码是否一致
+                if (pwd != pwd2) {
+                    msg(I18n.t('common.prompt'), I18n.t('set_account.paymentPasswordMismatch'), 1);
+                    return false;
+                }
+                
+                var url = baseConfig.baseUrl + "/index/user/pwd_pay";
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: {
+                        'pwd': pwd,
+                        'pwd2': pwd2,
+                        'oldpwd': oldpwd
+                    },
+                    dataType: "json",
+                    success: function(result) {
+                        if (result.code == 1) {
+                            msg(I18n.t('common.prompt'), result.info || I18n.t('set_account.changeSuccess'), 2, "./index.html");
+                        } else {
+                            msg(I18n.t('common.prompt'), result.info || I18n.t('set_account.changeFailed'), 1);
+                        }
+                    },
+                    error: function() {
+                        msg(I18n.t('common.prompt'), I18n.t('set_account.changeFailed'), 1);
+                    }
+                });
+            });
+        }
+        
+        function updateUIText() {
+            // 更新按钮文本
+            $('#sub_btn').text(I18n.t('set_account.confirmButton'));
+            $('.confirm.guanbi').text(I18n.t('common.confirm'));
+            
+            // 更新输入框占位符
+            $('input[data-i18n-placeholder]').each(function() {
+                const $input = $(this);
+                const key = $input.data('i18n-placeholder');
+                $input.attr('placeholder', I18n.t(key));
+            });
+        }
+        
+        function highlightNav() {
+            var nav = "set_account";
+            $(".t_span").removeClass("router-link-exact-active");
+            
+            // 由于修改支付密码在"我的"页面内，高亮"我的"导航
+            if (nav == "set_account" || nav == "user") {
+                $(".five").addClass("router-link-exact-active");
+            }
+        }
+        
+        function msg(title, content, type, url) {
+            $(".title").text(title);
+            $(".contents").html(content);
+            
+            let btn = '';
+            if (type == 1) {
+                btn = '<div class="confirm guanbi" onclick="$(\'.tipMask\').hide();">' + I18n.t('common.confirm') + '</div>';
+            } else {
+                btn = '<div class="confirm guanbi" onclick="window.location.href=\'' + url + '\'">' + I18n.t('common.confirm') + '</div>';
+            }
+            
+            $("#msgBtn").html(btn);
+            $(".tipMask").show();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,483 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title data-i18n="yeb.title">余额宝</title>
+    <style type="text/css">
+        html { font-size: 35px; }
+    </style>
+    <link rel="stylesheet" type="text/css" href="./static/css/common.css">
+    <script type="text/javascript" src="./static/js/bignumber.min.js"></script>
+</head>
+<body>
+    <script src="/static/js/layui.all.js"></script>
+    <div id="app">
+        <div class="box">
+            <div class="jun-content" style="height:100%">
+                <div class="f_box_mine slide">
+                    <div class="t_header">
+                        <span>
+                            <img src="./static/img/goback.png" alt="" onClick="javascript:history.back()">
+                        </span>
+                        <span>
+                            <i data-i18n="yeb.title">余额宝</i>
+                        </span>
+                    </div>
+                    <div style="display:block;position: relative;margin-top: 10px;background:#fff;border-radius:5px;width:96%;left:50%;transform:translate(-50%);">
+                        <div style="text-align:center;margin-top:30px;font-size:16px;color:gray;font-weight:700" data-i18n="yeb.totalAmount">
+                            总金额(元)
+                        </div>
+                        <div id="balance" style="text-align:center;margin-top:10px;font-size:40px;font-weight:700">
+                            9353
+                        </div>
+                        <div style="margin-top:10px;display: flex;">
+                            <div style="display:inline-block;width:33%;text-align:center;color:gray">
+                                <div data-i18n="yeb.yesterdayEarnings">
+                                    昨天收益(元)
+                                </div>
+                                <div id="preprofit">
+                                    0
+                                </div>
+                            </div>
+                            <div style="display:inline-block;width:33%;text-align:center;color:gray">
+                                <div data-i18n="yeb.totalEarnings">
+                                    累计收益(元)
+                                </div>
+                                <div id="totalprofit">
+                                    0
+                                </div>
+                            </div>
+                            <div style="display:inline-block;width:33%;text-align:center;color:gray">
+                                <div data-i18n="yeb.yesterdayBalance">
+                                    昨天余额
+                                </div>
+                                <div id="prebalance">
+                                    0
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top:10px">
+                            <div style="height:70px;text-align:center;line-height:70px">
+                                <!-- <button style="height:40px;width:120px;margin-right:10px;color:#fff;font-size:16px;background:#90ee90" data-i18n="yeb.withdraw">
+                                    转出
+                                </button> -->
+                                <button style="height:40px;width:120px;margin-left:10px;font-size:16px;color:#fff;background:#f08080"
+                                onclick="document.getElementById('comformsaving').style.display='block'" data-i18n="yeb.deposit">
+                                    转入
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:block;position:relative;margin-top:10px;background:#fff;border-radius:5px;width:96%;left:50%;transform:translate(-50%);overflow-y: scroll;padding-bottom: 50px;">
+                        <div style="height:35px;line-height:35px;padding:10px;text-align:center">
+                            <span style="display:inline-block;width:30%;height:30px;background:gray;line-height:30px;text-align:center;color:#fff;border-radius:5px;"
+                            onclick="change(1)" id="btnlist" data-i18n="yeb.planDetails">
+                                方案明细
+                            </span>
+                            <span style="display:inline-block;width:30%;height:30px;background:green;line-height:30px;text-align:center;color:#fff;border-radius:5px;"
+                            onclick="change(2)" id="btndoing" data-i18n="yeb.inProgress">
+                                进行中
+                            </span>
+                            <span style="display:inline-block;width:30%;height:30px;background:gray;line-height:30px;text-align:center;color:#fff;border-radius:5px;"
+                            onclick="change(3)" id="btnclosed" data-i18n="yeb.ended">
+                                已结束
+                            </span>
+                        </div>
+                        <div style="padding:10px;text-align:center" id="inprocess">
+                        </div>
+                        <div style="padding:10px;text-align:center;display:none;" id="yeblists">
+                        </div>
+                        <div style="padding:10px;text-align:center;display:none;" id="yebclosed">
+                        </div>
+                    </div>
+                </div>
+                <div style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:300px;height:400px;background:#fff;border-radius:10px;box-shadow:0 0 5px 2px grey"
+                id="comformsaving">
+                    <div style="text-align:center;height:50px;line-height:50px;font-size:16px;font-weight:700;color:gray;border-bottom:1px solid #d3d3d3;background: lavender;" data-i18n="yeb.openYuebao">
+                        办理余额宝存入
+                    </div>
+                    <div style="text-align:center;height:50px;line-height:50px;font-size:16px;font-weight:700;color:gray;border-bottom:1px dotted #d3d3d3">
+                        <span style="float:left;margin-left:10px" data-i18n="yeb.currentAvailable">
+                            当前可用余额:
+                        </span>
+                        <span style="float:right;margin-right:10px">
+                            <a id="mybalance"></a>
+                            <span data-i18n="common.yuan">元</span>
+                        </span>
+                    </div>
+                    <div style="text-align:center;height:50px;line-height:50px;font-size:16px;font-weight:700;color:gray;border-bottom:1px dotted #d3d3d3">
+                        <span style="float:left;margin-left:10px" data-i18n="yeb.plans">
+                            余额宝方案:
+                        </span>
+                        <span style="float:right;margin-right:10px;display:inline-block;width:150px;text-align:end">
+                            <select id="chooseid" style="width:120px;border:none"></select>
+                        </span>
+                    </div>
+                    <div style="text-align:center;height:50px;line-height:50px;font-size:16px;font-weight:700;color:gray;border-bottom:1px dotted #d3d3d3">
+                        <span style="float:left;margin-left:10px" data-i18n="yeb.annualRate">
+                            年化收益率:
+                        </span>
+                        <span id="hilily" style="float:right;margin-right:10px"></span>
+                    </div>
+                    <div style="text-align:center;height:50px;line-height:50px;font-size:16px;font-weight:700;color:gray;border-bottom:1px dotted #d3d3d3">
+                        <span style="float:left;margin-left:10px" data-i18n="yeb.depositAmount">
+                            存入金额:
+                        </span>
+                        <span style="display: flex;justify-content: space-around;padding: 0 5px;">
+                            <input style="width: 50%;text-align: right;" name="money" id="money"    data-i18n-placeholder="yeb.enterAmount" >
+                            <p onclick="allin()" style="margin-left: 5px;font-size: 12px;" data-i18n="yeb.transferAll">
+                                全部转入
+                            </p>
+                        </span>
+                    </div>
+                    <div style="text-align:center;height:50px;line-height:50px;font-size:16px;font-weight:700;color:gray;border-bottom:1px dotted #d3d3d3">
+                        <button style="line-height: 30px;width: 60px;margin: 0 5px;background: #e87f7f;color: white;border-radius: 5px;"
+                        onclick="document.getElementById('comformsaving').style.display='none'" data-i18n="yeb.cancel">
+                            取消
+                        </button>
+                        <button onclick="joinnow()" style="line-height: 30px;width: 60px;margin: 0 5px;background: #2fb52f;border-radius: 5px;color: white;" data-i18n="yeb.submit">
+                            提交
+                        </button>
+                    </div>
+                </div>
+                <div class="footer">
+                    <div>
+                        <a href="./index.html" class="t_span one">
+                            <i></i>
+                            <span data-i18n="nav.home">首页</span>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="./recharge.html" class="t_span two">
+                            <i></i>
+                            <span data-i18n="nav.recharge">充值</span>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="./hold.html" class="t_span three">
+                            <i></i>
+                            <span data-i18n="nav.hold">持仓</span>
+                        </a>
+                    </div>
+                    <div>
+                        <a onClick="" class="t_span four">
+                            <i></i>
+                            <span data-i18n="nav.customerService">客服</span>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="./user.html" class="t_span five">
+                            <i></i>
+                            <span data-i18n="nav.my">我的</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 添加i18n.js -->
+                <script src="./static/js/i18n.js"></script>
+                <script src="./static/js/jquery-1.9.1.min.js"></script>
+                <script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+                <script src="./static/js/utils.js"></script>
+                
+                <script type="text/javascript">
+                    $(function() {
+                        // 初始化语言
+                        const savedLang = localStorage.getItem('preferredLanguage') || 'zh-CN';
+                        I18n.init(savedLang).then(() => {
+                            console.log('语言初始化完成:', I18n.currentLang);
+                            loadYebData();
+                        });
+                        
+                        // 监听语言变化
+                        $(document).on('languageChanged', function(event, lang) {
+                            console.log('语言已切换到:', lang);
+                            loadYebData();
+                        });
+                        
+                        var nav = "yeb";
+                        if (nav == "index") {
+                            $(".one").addClass("router-link-exact-active");
+                        }
+                        if (nav == "recharge") {
+                            $(".two").addClass("router-link-exact-active");
+                        }
+                        if (nav == "hold") {
+                            $(".three").addClass("router-link-exact-active");
+                        }
+                        if (nav == "yeb") {
+                            $(".four").addClass("router-link-exact-active");
+                        }
+                        if (nav == "user") {
+                            $(".five").addClass("router-link-exact-active");
+                        }
+                    });
+                    
+                    function change(id) {
+                        if (id == 1) {
+                            $('#btnlist').css('background', 'green');
+                            $('#btndoing').css('background', 'gray');
+                            $('#btnclosed').css('background', 'gray');
+                            $('#yeblists').css('display', 'block');
+                            $('#inprocess').css('display', 'none');
+                            $('#yebclosed').css('display', 'none');
+                        }
+                        if (id == 2) {
+                            $('#btnlist').css('background', 'gray');
+                            $('#btndoing').css('background', 'green');
+                            $('#btnclosed').css('background', 'gray');
+                            $('#yeblists').css('display', 'none');
+                            $('#inprocess').css('display', 'block');
+                            $('#yebclosed').css('display', 'none');
+                        }
+                        if (id == 3) {
+                            $('#btnlist').css('background', 'gray');
+                            $('#btndoing').css('background', 'gray');
+                            $('#btnclosed').css('background', 'green');
+                            $('#yeblists').css('display', 'none');
+                            $('#inprocess').css('display', 'none');
+                            $('#yebclosed').css('display', 'block');
+                        }
+                    }
+                    
+                    function loadYebData() {
+                        AjaxUtil.get('/index/user/yeb').then(res => {
+                            if(res.code==1){
+                                // 方案选择下拉框
+                                let selectHtml = `<option value="" data-i18n="yeb.selectPlan">请选择方案</option>`;
+                                let yeblistsHtml = '';
+                                
+                                // 方案明细列表
+                                res.data.yuebao.forEach(item=>{
+                                    selectHtml += `<option id="op${item.id}" value="${item.id}" lily="${item.lily}" lowmoney="${item.lowmoney}" days="${item.days}">
+                                                        ${item.title}
+                                                    </option>`;
+                                    yeblistsHtml += `
+                                        <div style="border-radius:5px;box-shadow:0 0 2px 1px;margin: 10px 0;">
+                                            <div style="display:block;height:30px;line-height:30px">
+                                                <span style="float:left;margin-left:10px">
+                                                    ${I18n.t('yeb.productName')}：${item.title}
+                                                </span>
+                                                <span style="float:right;margin-right:10px">
+                                                    ${I18n.t('yeb.minDeposit')}：${item.lowmoney}${I18n.t('common.yuan')}
+                                                </span>
+                                            </div>
+                                            <div style="display:block;height:30px;line-height:30px">
+                                                <span style="float:left;margin-left:10px">
+                                                    ${I18n.t('yeb.annualYield')}：${item.lily}%
+                                                </span>
+                                                <span style="float:right;margin-right:10px">
+                                                    ${I18n.t('yeb.expectedEarnings')}：${item.finishprofit}${I18n.t('common.yuan')}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    `;
+                                });
+                                
+                                // 进行中列表
+                                let inprocessHtml = '';
+                                res.data.doinglist.forEach(item=>{
+                                    inprocessHtml += `
+                                        <div style="border-radius:5px;box-shadow:0 0 2px 1px;margin: 10px 0;">
+                                            <div style="display:block;height:30px;line-height:30px">
+                                                <span style="float:left;margin-left:10px">
+                                                    ${I18n.t('yeb.productName')}：${item.yebtitle}:${item.money}${I18n.t('common.yuan')}
+                                                </span>
+                                                <span style="float:right;margin-right:10px">
+                                                    ${I18n.t('yeb.currentEarnings')}：${item.nowprofit}${I18n.t('common.yuan')}
+                                                </span>
+                                            </div>
+                                            <div style="display:block;height:30px;line-height:30px">
+                                                <span style="float:left;margin-left:10px">
+                                                    ${I18n.t('yeb.applyTime')}：${item.start_time}
+                                                </span>
+                                                <span style="float:right;margin-right:10px">
+                                                    ${I18n.t('yeb.status')}：${item.status==1?I18n.t('yeb.inProgress'):I18n.t('yeb.ended')}
+                                                </span>
+                                            </div>
+                                            <div style="display:block;height:30px;line-height:30px">
+                                                <span style="float:left;margin-left:10px">
+                                                    ${I18n.t('yeb.estimatedEarnings')}：${item.finishprofit}${I18n.t('common.yuan')}
+                                                </span>
+                                                <span style="float:right;margin-right:10px">
+                                                    <button onclick="yebstop(${item.id})" data-i18n="yeb.terminate">终止</button>
+                                                    /
+                                                    <button onclick="yebkeep(${item.id})" data-i18n="yeb.renew">续期</button>
+                                                </span>
+                                            </div>
+											<div style="display:block;height:30px;line-height:30px">
+											    <span style="float:left;margin-left:10px">
+											        ${I18n.t('yeb.endTime')}：${item.end_time}
+											    </span>
+											
+											</div>
+                                        </div>
+                                    `;
+                                });
+                                
+                                // 已结束列表
+                                let yebclosedHtml = '';
+                                res.data.closedlist.forEach(item=>{
+                                    yebclosedHtml += `
+                                        <div style="border-radius:5px;box-shadow:0 0 2px 1px;margin: 10px 0;">
+                                            <div style="display:block;height:30px;line-height:30px">
+                                                <span style="float:left;margin-left:10px">
+                                                    ${I18n.t('yeb.productName')}：${item.yebtitle}:${item.money}${I18n.t('common.yuan')}
+                                                </span>
+                                                <span style="float:right;margin-right:10px">
+                                                    ${I18n.t('yeb.currentEarnings')}：${item.nowprofit}${I18n.t('common.yuan')}
+                                                </span>
+                                            </div>
+                                            <div style="display:block;height:30px;line-height:30px">
+                                                <span style="float:left;margin-left:10px">
+                                                    ${I18n.t('yeb.applyTime')}：${item.start_time}
+                                                </span>
+                                                <span style="float:right;margin-right:10px">
+                                                    ${I18n.t('yeb.status')}：${I18n.t('yeb.settled')}
+                                                </span>
+                                            </div>
+                                            <div style="display:block;height:30px;line-height:30px">
+                                                <span style="float:left;margin-left:10px">
+                                                    ${I18n.t('yeb.endTime')}：${item.end_time}
+                                                </span>
+                                                <span style="float:right;margin-right:10px">
+                                                    <button onclick='restartJoinnow(${JSON.stringify(item)})' data-i18n="yeb.repurchase">重新购买</button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    `;
+                                });
+                                
+                                $("#yeblists").html(yeblistsHtml);
+                                $("#inprocess").html(inprocessHtml);
+                                $("#yebclosed").html(yebclosedHtml);
+                                $("#chooseid").html(selectHtml);
+                                $('#mybalance').text(res.data.userbalance);
+                                
+                                // 余额宝总额数据
+                                $('#balance').text(res.data.yuebaouc.balance);
+                                $('#preprofit').text(res.data.yuebaouc.preprofit);
+                                $('#prebalance').text(res.data.yuebaouc.prebalance);
+                                $('#totalprofit').text(res.data.yuebaouc.totalprofit);
+                                
+                                // 绑定下拉框变化事件
+                                $("#chooseid").change(function() {
+                                    var selected = $(this).children('option:selected').val();
+                                    var lily = $('#op' + selected).attr('lily');
+                                    $('#hilily').text(lily + "%");
+                                });
+                                
+                                // 手动应用翻译到动态生成的元素
+                                I18n.applyTranslations();
+                            }
+                        });
+                    }
+                    
+                    function restartJoinnow(itemStr) {
+                        let item = itemStr
+                        $.ajax({
+                            type: 'post',
+                            url: baseConfig.baseUrl+'/index/user/yebjoinnow',
+                            dataType: "json",
+                            data: {
+                                yebid: item.yuebaoid,
+                                money: item.money
+                            },
+                            success: function(res) {
+                                console.log(res);
+					
+                                layer.msg(res.info);
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 1000);
+                            },
+							complete:function(res){
+								console.log(res);
+							}
+                        });
+                    }
+                    
+                    function joinnow() {
+                        var yebid = $('#chooseid').val();
+                        var money = $('#money').val();
+                        if (yebid == "" || money == "") {
+                            layer.msg(I18n.t('yeb.selectPlanHint'));
+                            return;
+                        }
+                        $.ajax({
+                            type: 'post',
+                            url: baseConfig.baseUrl+'/index/user/yebjoinnow',
+                            dataType: "json",
+                            data: {
+                                yebid: yebid,
+                                money: money
+                            },
+                            success: function(res) {
+                                console.log(res);
+								layer.msg(res.info);
+								if(res.code==1){
+									setTimeout(function() {
+									    location.reload();
+									}, 1000);
+								}
+								return
+                                
+                                
+                            },
+							complete:function(res){
+								console.log(res);
+							}
+                        });
+                    }
+                    
+                    function yebstop(id) {
+                        $.ajax({
+                            type: 'post',
+                            url: baseConfig.baseUrl+'/index/user/yebstop',
+                            data: {
+                                id: id
+                            },
+                            dataType: "json",
+                            success: function(res) {
+                                console.log(res);
+                                layer.msg(res.info);
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 1000);
+                            }
+                        });
+                    }
+                    
+                    function yebkeep(id) {
+                        $.ajax({
+                            type: 'post',
+                            url: baseConfig.baseUrl+'/index/user/yebkeep',
+                            data: {
+                                id: id
+                            },
+                            dataType: "json",
+                            success: function(res) {
+                                console.log(res);
+                                layer.msg(res.info);
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 1000);
+                            }
+                        });
+                    }
+                    
+                    function allin() {
+                        var mybalance = $('#mybalance').text();
+                        $('#money').val(mybalance);
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

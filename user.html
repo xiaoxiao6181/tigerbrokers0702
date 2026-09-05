@@ -1,0 +1,327 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title data-i18n="user.title">我的</title>
+    <style type="text/css">
+        html { font-size: 35px; }
+        
+    </style>
+    <link rel="stylesheet" type="text/css" href="./static/css/common.css">
+    <script type="text/javascript" src="./static/js/bignumber.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="box">
+            <div class="jun-content">
+                <div class="f_box_mine slide">
+                    <div class="t_header">
+                        <span>
+                            <img src="./static/img/goback.png" alt="" onClick="javascript:history.back()">
+                        </span>
+                        <span>
+                            <i data-i18n="user.personalCenter">个人中心</i>
+                        </span>
+                    </div>
+                    <div class="f_mine_box">
+                        <div class="f_mine" style="">
+                            <div class="img_cion">
+                                <img src="" alt="" class="f_mine_header"
+                                data-src="" lazy="loaded">
+                            </div>
+                            <p>
+                                <span id="name"></span>
+                            </p>
+                            <p>
+                                <span id="account" style="display: inline-block;padding: 0 12px;line-height: 20px;height: 20px;font-size: 16px;color: #ffffff;background: #7d5dd8;border-radius: 3px;">
+                                </span>
+                            </p>
+                            <div class="f_tab1">
+                                <span>
+                                    <p id="money"></p>
+                                    <p data-i18n="user.availableBalance">可用余额</p>
+                                </span>
+                                <span>
+                                    <p id="give_money">0.00</p>
+                                    <p data-i18n="user.bonusReceived">已获赠金</p>
+                                </span>
+                            </div>
+                            <marquee>
+                                <font color=red id="notice"></font>
+                            </marquee>
+                            <div class="f_tab2">
+                                <span>
+                                    <a href="./recharge.html" class="">
+                                        <p data-i18n="user.recharge">充值</p>
+                                    </a>
+                                </span>
+                                <span>
+                                    <a href="./cash.html" class="">
+                                        <p data-i18n="user.withdraw">提现</p>
+                                    </a>
+                                </span>
+                            </div>
+                            <div class="f_table">
+                                <div class="el-col el-col-6" id="i2">
+                                    <a href="./inquiries.html" class="">
+                                        <img src="./static/img/icon_my_search@2x.png" alt="" class="i2"
+                                        data-src="./static/img/icon_my_search@2x.png" lazy="loaded">
+                                        <p data-i18n="user.closePositionQuery">平仓查询</p>
+                                    </a>
+                                </div>
+                                <div class="el-col el-col-6" id="i3">
+                                    <a href="./fund.html" class="">
+                                        <img src="./static/img/icon_my_revenue_and_expenditure@2x.png" alt=""
+                                        class="i3" data-src="./static/img/icon_my_revenue_and_expenditure@2x.png"
+                                        lazy="loaded">
+                                        <p data-i18n="user.incomeExpenseDetail">收支明细</p>
+                                    </a>
+                                </div>
+                                <div class="el-col el-col-6" id="i6">
+                                    <a href="./notice.html" class="">
+                                        <img src="./static/img/icon_my_announcement@2x.png" alt="" class="i6"
+                                        data-src="./static/img/icon_my_announcement@2x.png" lazy="loaded">
+                                        <p data-i18n="user.latestAnnouncement">最新公告</p>
+                                    </a>
+                                </div>
+                                <div class="el-col el-col-6">
+                                    <a href="./company_profile.html" class="">
+                                        <img src="./static/img/download.png" alt="" data-src="./static/img/download.png"
+                                        lazy="loaded">
+                                        <p data-i18n="user.companyProfile">公司简介</p>
+                                    </a>
+                                </div>
+                                <div class="el-col el-col-6" id="i7">
+                                    <a href="./bank_card.html" class="">
+                                        <img src="./static/img/icon_my_bank_card@2x.png" alt="" class="i7"
+                                        data-src="./static/img/icon_my_bank_card@2x.png" lazy="loaded">
+                                        <p data-i18n="user.bankCard">银行卡</p>
+                                    </a>
+                                </div>
+                                <div class="el-col el-col-6" id="i8">
+                                    <a href="./recommend.html" class="">
+                                        <img src="./static/img/icon_my_agency@2x.png" alt="" class="i8"
+                                        data-src="./static/img/icon_my_agency@2x.png" lazy="loaded">
+                                        <p data-i18n="user.promotionCode">推广码</p>
+                                    </a>
+                                </div>
+                                <div class="el-col el-col-6" id="i9">
+                                    <a href="./yeb.html" class="">
+                                        <img src="./static/img/icon_my_vouchers@2x.png" alt="" class="i9"
+                                        data-src="./static/img/icon_my_vouchers@2x.png" lazy="loaded">
+                                        <p data-i18n="user.yuebao">余额宝</p>
+                                    </a>
+                                </div>
+                                <div class="el-col el-col-6">
+                                    <a href="./set_account.html" class="">
+                                        <img src="./static/img/icon_my_cipher@2x.png" alt="" data-src="./static/img/icon_my_cipher@2x.png"
+                                        lazy="loaded">
+                                        <p data-i18n="user.accountSecurity">账号安全</p>
+                                    </a>
+                                </div>
+                                <div class="el-col el-col-6">
+                                    <a href="./msg.html" class="">
+                                        <img src="./static/img/xx.png" alt="" data-src="./static/img/xx.png"
+                                        lazy="loaded">
+                                        <p data-i18n="user.inbox">站内消息</p>
+                                    </a>
+                                </div>
+                                <div class="el-col el-col-6">
+                                    <a href="./realMe.html" class="">
+                                        <img src="./static/img/mine2.png" alt="" data-src="./static/img/mine2.png"
+                                        lazy="loaded">
+                                        <p data-i18n="user.realMe">实名认证</p>
+                                    </a>
+                                </div>
+                                <div class="el-col el-col-6" id="i3">
+                                    <a href="./recharge_record.html" class="">
+                                        <img src="./static/img/icon_my_revenue_and_expenditure@2x.png" alt=""
+                                        class="i3" data-src="./static/img/icon_my_revenue_and_expenditure@2x.png"
+                                        lazy="loaded">
+                                        <p data-i18n="user.rechargeRecords">充值记录</p>
+                                    </a>
+                                </div>
+                                <div class="el-col el-col-6" id="i3">
+                                    <a href="./cash_record.html" class="">
+                                        <img src="./static/img/icon_my_revenue_and_expenditure@2x.png" alt=""
+                                        class="i3" data-src="./static/img/icon_my_revenue_and_expenditure@2x.png"
+                                        lazy="loaded">
+                                        <p data-i18n="user.withdrawRecords">提现记录</p>
+                                    </a>
+                                </div>
+                                <div class="el-col el-col-6">
+                                    <div>
+                                        <a onclick="logout()" class="">
+                                            <img src="./static/img/icon_my_pull_out@2x.png" alt="" data-src="./static/img/icon_my_pull_out@2x.png"
+                                            lazy="loaded">
+                                            <p data-i18n="user.logout">退出登录</p>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="jun-empty"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <div>
+                        <a href="./index.html" class="t_span one">
+                            <i></i>
+                            <span data-i18n="nav.home">首页</span>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="./recharge.html" class="t_span two">
+                            <i></i>
+                            <span data-i18n="nav.recharge">充值</span>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="./hold.html" class="t_span three">
+                            <i></i>
+                            <span data-i18n="nav.hold">持仓</span>
+                        </a>
+                    </div>
+                    <div>
+                        <a onClick="" class="t_span four">
+                            <i></i>
+                            <span data-i18n="nav.customerService">客服</span>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="./user.html" class="t_span five">
+                            <i></i>
+                            <span data-i18n="nav.my">我的</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 添加i18n.js -->
+                <script src="./static/js/i18n.js"></script>
+                <script src="./static/js/jquery-1.9.1.min.js"></script>
+                <script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+                <script src="./static/js/utils.js"></script>
+                
+                <script type="text/javascript">
+					
+                    $(function() {
+                        var cachedUser = getCachedUserInfo();
+                        if (cachedUser) {
+                            renderUserInfo(cachedUser);
+                        }
+
+                        initPageWithData(
+                            function() {
+                                return AjaxUtil.get('/index/user/getUserInfo', { loadingHide: true });
+                            },
+                            function(res) {
+                                if (res && res.code == 1 && res.data && res.data.user) {
+                                    localStorage.setItem('userInfo', JSON.stringify(res.data.user));
+                                    renderUserInfo(res.data.user);
+                                }
+                            }
+                        );
+                        
+                        $(document).on('languageChanged', function(event, lang) {
+                            I18n.applyTranslations();
+                        });
+
+                        $(document).on('pageRestored', function() {
+                            getUserInfo().then(renderUserInfo).catch(function() {});
+                        });
+                        
+                        var nav = "user";
+                        highlightNav(nav);
+                    });
+
+                    function renderUserInfo(userInfo) {
+                        if (!userInfo) return;
+                        const realName = (userInfo.name || '').trim();
+                        const phone = userInfo.phone || '';
+
+                        if (realName) {
+                            $("#name").text(realName);
+                            $("#account").text(phone).parent().show();
+                        } else {
+                            $("#name").text(phone);
+                            $("#account").parent().hide();
+                        }
+
+                        $("#money").text(formatCurrency(userInfo.money || 0));
+                        $("#give_money").text(formatCurrency(userInfo.give_money || 0));
+                    }
+                    
+                    async function loadUserInfo() {
+                        try {
+                            const userInfo = await getUserInfo();
+                            renderUserInfo(userInfo);
+                        } catch (error) {
+                            console.error('加载用户信息失败:', error);
+                            $("#name").text('用户');
+                            $("#account").parent().hide();
+                            $("#money").text('0.00');
+                            $("#give_money").text('0.00');
+                        }
+                    }
+          
+					function logout() {
+						let code=localStorage.getItem('code')
+					    localStorage.clear();
+						if(code){
+							localStorage.setItem('code',code)
+						}
+					    location.href = './login.html';
+					}
+                    function formatCurrency(amount) {
+                        if (typeof amount !== 'number') {
+                            amount = parseFloat(amount) || 0;
+                        }
+                        return amount.toFixed(2);
+                    }
+                    
+                    function highlightNav(nav) {
+                        $(".t_span").removeClass("router-link-exact-active");
+                        if (nav == "index") {
+                            $(".one").addClass("router-link-exact-active");
+                        }
+                        if (nav == "recharge") {
+                            $(".two").addClass("router-link-exact-active");
+                        }
+                        if (nav == "hold") {
+                            $(".three").addClass("router-link-exact-active");
+                        }
+                        if (nav == "yeb") {
+                            $(".four").addClass("router-link-exact-active");
+                        }
+                        if (nav == "user") {
+                            $(".five").addClass("router-link-exact-active");
+                        }
+                    }
+                    
+                    // 确保getUserInfo函数存在
+                    if (typeof getUserInfo !== 'function') {
+                        async function getUserInfo() {
+                            try {
+                                const response = await AjaxUtil.get('/index/user/getUserInfo');
+                                if (response.code == 1) {
+                                    return response.data || {};
+                                }
+                                return {};
+                            } catch (error) {
+                                console.error('获取用户信息失败:', error);
+                                return {};
+                            }
+                        }
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

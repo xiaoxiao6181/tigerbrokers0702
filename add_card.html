@@ -1,0 +1,373 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title data-i18n="bank_card.addTitle">添加银行卡</title>
+    <style type="text/css">
+        html { font-size: 35px; }
+       .f_box_addbank .f_content ul li span select {
+       			    width: 100%;
+       				background: none;
+       				border: none;
+       				    outline: none;
+       				color: #fff;
+       				background: #111723;
+       				font-size: .4rem;
+       				height: 100%;
+       				width: 70%;
+       			}
+        .hide { display: none; }
+    </style>
+    <link rel="stylesheet" type="text/css" href="./static/css/common.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/tipmask.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/box_pay.css">
+    <script type="text/javascript" src="./static/js/bignumber.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="box">
+            <div class="jun-content">
+                <div class="f_box_addbank">
+                    <div class="t_header">
+                        <span>
+                            <img src="./static/img/goback.png" alt="" onClick="javascript:history.back()">
+                        </span>
+                        <span>
+                            <i data-i18n="bank_card.addTitle">添加银行卡</i>
+                        </span>
+                    </div>
+                    <div class="f_content">
+                        <ul>
+                            <li>
+                                <label data-i18n="bank_card.paymentMethod">支付方式</label>
+                                <span class="">
+                                    <select name="pay_id" id="pay_id"></select>
+                                </span>
+                            </li>
+                            <li class="bank">
+                                <label data-i18n="bank_card.name">姓名</label>
+                                <span>
+                                    <input type="text" name="name" id="name" value="" 
+                                           data-i18n-placeholder="bank_card.namePlaceholder"
+                                           placeholder="输入姓名">
+                                </span>
+                            </li>
+                            <li class="bank">
+                                <label data-i18n="bank_card.bankName">银行名称</label>
+                                <span>
+                                    <input type="text" name="bank" id="bank" value="" 
+                                           data-i18n-placeholder="bank_card.bankNamePlaceholder"
+                                           placeholder="输入银行名称">
+                                </span>
+                            </li>
+                            <li class="bank">
+                                <label data-i18n="bank_card.cardNumber">银行卡号</label>
+                                <span>
+                                    <input type="text" name="account" id="account" value="" 
+                                           data-i18n-placeholder="bank_card.cardNumberPlaceholder"
+                                           placeholder="输入银行卡号">
+                                </span>
+                            </li>
+                            <li class="usdt">
+                                <label data-i18n="bank_card.walletAddress">钱包地址</label>
+                                <span>
+                                    <input type="text" name="usdt" id="usdt" value="" 
+                                           data-i18n-placeholder="bank_card.walletAddressPlaceholder"
+                                           placeholder="输入钱包地址">
+                                </span>
+                            </li>
+                        </ul>
+                        <div class="sure">
+                            <button id="sub_btn" type="button" class="el-button el-button--danger"
+                                    data-i18n="bank_card.confirmBind">
+                                确认绑定
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <div>
+                    <a href="./index.html" class="t_span one">
+                        <i></i>
+                        <span data-i18n="nav.home">首页</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./recharge.html" class="t_span two">
+                        <i></i>
+                        <span data-i18n="nav.recharge">充值</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./hold.html" class="t_span three">
+                        <i></i>
+                        <span data-i18n="nav.hold">持仓</span>
+                    </a>
+                </div>
+                <div>
+                    <a onClick="" class="t_span four">
+                        <i></i>
+                        <span data-i18n="nav.customerService">客服</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./user.html" class="t_span five">
+                        <i></i>
+                        <span data-i18n="nav.my">我的</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tipMask hide">
+        <div class="cont">
+            <p class="title" data-i18n="common.prompt">温馨提示</p>
+            <p class="stitle contents"></p>
+            <div id="msgBtn">
+                <div class="confirm guanbi" data-i18n="common.confirm">确定</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 添加i18n.js -->
+    <script src="./static/js/i18n.js"></script>
+    <script src="./static/js/jquery-1.9.1.min.js"></script>
+    <script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+    
+    <script type="text/javascript">
+        $(function() {
+            // 初始化语言
+            const savedLang = localStorage.getItem('preferredLanguage') || 'zh-CN';
+            I18n.init(savedLang).then(() => {
+                console.log('语言初始化完成:', I18n.currentLang);
+                loadPaymentMethods();
+                setupEventListeners();
+            });
+            
+            // 监听语言变化
+            $(document).on('languageChanged', function(event, lang) {
+                console.log('语言已切换到:', lang);
+                updateUIText();
+            });
+            
+            // 高亮当前导航
+            highlightNav();
+            
+            // 确保提示框的确定按钮有翻译
+            setTimeout(() => {
+                $('.confirm.guanbi').text(I18n.t('common.confirm'));
+            }, 100);
+        });
+        
+        let pay_id = null;
+        let pay_type = 1;
+        
+        function loadPaymentMethods() {
+            AjaxUtil.get('/index/index/getPayMentList').then(res => {
+                let pay_Html = '';
+                $.each(res.data.list, function (index, item) {
+                    pay_Html += `<option value="${item.id}" data-item='${JSON.stringify(item)}'>${item.title}</option>`;
+                });
+                $("#pay_id").html(pay_Html);
+                
+                if (res.data.list.length > 0) {
+                    pay_id = res.data.list[0].id;
+                    pay_type = res.data.list[0].type;
+                    
+                    if (res.data.list[0].type == 2) {
+                        $(".bank").hide();
+                        $(".usdt").show();
+                    } else {
+                        $(".bank").show();
+                        $(".usdt").hide();
+                    }
+                }
+            })
+        }
+        
+        function setupEventListeners() {
+            // 支付方式变更
+            $('#pay_id').change(function() {
+                const selectedOption = $(this).find('option:selected');
+                let data = selectedOption.data('item');
+                
+                if (!data) {
+                    try {
+                        data = JSON.parse(selectedOption.attr('data-item'));
+                    } catch(e) {
+                        console.error('解析支付方式数据失败:', e);
+                        return;
+                    }
+                }
+                
+                pay_id = data.id;
+                pay_type = data.type;
+                
+                if (data.type == 2) {
+                    $(".bank").hide();
+                    $(".usdt").show();
+                } else {
+                    $(".bank").show();
+                    $(".usdt").hide();
+                }
+            });
+            
+            // 确认绑定按钮
+            $("#sub_btn").on("click", function() {
+                const bank = $('#bank').val().trim();
+                const account = $('#account').val().trim();
+                const usdt = $("#usdt").val().trim();
+                
+                let options = {};
+                
+                if (pay_type == 2) {
+                    // 钱包
+                    if (!usdt) {
+                        msg(I18n.t('common.prompt'), I18n.t('bank_card.validation.walletRequired'), 1);
+                        return false;
+                    }
+					if (!isValidAlphanumeric(usdt)) {
+						$('#usdt').focus();
+						msg(I18n.t('common.prompt'),  I18n.t('bank_card.walletAddress')+I18n.t('common.check'), 1);
+						return; // 如果校验失败，停止后续提交逻辑
+					}
+                    options = {
+                        usdt,
+                        pay_id,
+                        type: pay_type
+                    };
+                } else {
+                    // 银行卡
+                    if (!account) {
+                        msg(I18n.t('common.prompt'), I18n.t('bank_card.validation.cardNumberRequired'), 1);
+                        return false;
+                    }
+                    if (!isValidAlphanumeric(account)) {
+                    	$('#account').focus();
+                    	msg(I18n.t('common.prompt'), I18n.t('bank_card.cardNumber')+I18n.t('common.check'), 1);
+                    	return; // 如果校验失败，停止后续提交逻辑
+                    }
+                    
+                    const name = $('#name').val().trim();
+                    if (!name) {
+                        msg(I18n.t('common.prompt'), I18n.t('bank_card.validation.nameRequired'), 1);
+                        return false;
+                    }
+                    if (!isValidChineseName(name)) {
+                        msg(I18n.t('common.prompt'), I18n.t('bank_card.validation.nameInvalid'), 1);
+                        return false;
+                    }
+                    
+                    if (!bank) {
+                        msg(I18n.t('common.prompt'), I18n.t('bank_card.validation.bankRequired'), 1);
+                        return false;
+                    }
+					
+					// if (!isValidAlphanumeric(bank)) {
+					// 	$('#bank').focus();
+					// 	msg(I18n.t('common.prompt'),I18n.t('bank_card.bankName')+ I18n.t('common.check'), 1);
+					// 	return; // 如果校验失败，停止后续提交逻辑
+					// }
+                    options = {
+                        name,
+                        bank,
+                        account,
+                        pay_id,
+                        type: pay_type
+                    };
+                }
+                
+                AjaxUtil.post('/index/user/add_card', options).then(
+                    function(res) {
+                        msg(I18n.t('common.prompt'), res.info || I18n.t('bank_card.bindSuccess'), 2, "./bank_card.html");
+                    },
+                    function(err) {
+                        const message = (err && (err.info || err.msg)) || I18n.t('bank_card.validation.bindFailed');
+                        msg(I18n.t('common.prompt'), message, 1);
+                    }
+                );
+            });
+        }
+        
+        function updateUIText() {
+            // 更新按钮文本
+            $('#sub_btn').text(I18n.t('bank_card.confirmBind'));
+            $('.confirm.guanbi').text(I18n.t('common.confirm'));
+            
+            // 更新输入框占位符
+            $('input[data-i18n-placeholder]').each(function() {
+                const $input = $(this);
+                const key = $input.data('i18n-placeholder');
+                $input.attr('placeholder', I18n.t(key));
+            });
+        }
+        
+        function highlightNav() {
+            var nav = "bank_card";
+            $(".t_span").removeClass("router-link-exact-active");
+            
+            // 由于添加银行卡在"我的"页面内，高亮"我的"导航
+            if (nav == "bank_card" || nav == "user") {
+                $(".five").addClass("router-link-exact-active");
+            }
+        }
+        
+        function isValidChineseName(name) {
+            return /^[\u4e00-\u9fa5]+[·•]?[\u4e00-\u9fa5]+$/.test(name);
+        }
+
+        function msg(title, content, type, url) {
+            $(".title").text(title);
+            $(".contents").html(content);
+            
+            let btn = '';
+            if (type == 1) {
+                btn = '<div class="confirm guanbi" onclick="$(\'.tipMask\').hide();">' + I18n.t('common.confirm') + '</div>';
+            } else {
+                btn = '<div class="confirm guanbi" onclick="window.location.href=\'' + url + '\'">' + I18n.t('common.confirm') + '</div>';
+            }
+            
+            $("#msgBtn").html(btn);
+            $(".tipMask").show();
+        }
+        
+        // 确保必要的翻译存在
+        function ensureTranslations() {
+            if (!I18n.translations.bank_card) {
+                I18n.translations.bank_card = {};
+            }
+            
+            const bankCardDefaults = {
+                'addTitle': '添加银行卡',
+                'confirmBind': '确认绑定',
+                'bindSuccess': '绑定成功',
+                'bindFailed': '绑定失败',
+                'validation': {
+                    'walletRequired': '请输入钱包地址',
+                    'cardNumberRequired': '请输入银行卡号',
+                    'cardNumberMinLength': '银行卡号至少10位',
+                    'nameRequired': '请输入姓名',
+                    'nameInvalid': '请输入正确的姓名',
+                    'nameMinLength': '姓名至少2位',
+                    'bankRequired': '请输入银行名称',
+                    'branchRequired': '请输入开户行'
+                }
+            };
+            
+            // 合并默认值
+            Object.assign(I18n.translations.bank_card, bankCardDefaults);
+        }
+        
+        // 调用确保翻译存在
+        ensureTranslations();
+    </script>
+</body>
+</html>

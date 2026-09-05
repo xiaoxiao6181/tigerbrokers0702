@@ -1,0 +1,262 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title data-i18n="bank_card.title">银行卡管理</title>
+    <style type="text/css">
+        html { font-size: 35px; }
+        
+        .no-data { 
+            text-align: center; 
+            padding: 40px 20px; 
+            color: #999; 
+        }
+        .loading { 
+            text-align: center; 
+            padding: 20px; 
+            color: #999; 
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="./static/css/common.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/box_pay.css">
+    <script type="text/javascript" src="./static/js/bignumber.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="box">
+            <div class="jun-content">
+                <div class="f_box_bank">
+                    <div class="t_header">
+                        <span>
+                            <img src="./static/img/goback.png" alt="" onClick="javascript:history.back()">
+                        </span>
+                        <span>
+                            <i data-i18n="bank_card.title">银行卡管理</i>
+                        </span>
+                    </div>
+                    <div class="f_content" id="banklist">
+                        <!-- 银行卡列表将通过JS动态生成 -->
+                        <div class="loading" data-i18n="bank_card.loading">加载中...</div>
+                    </div>
+                    <div class="f_content">
+                        <div class="addbank">
+                            <a href="#" class="kefu" id="modifyBankServiceLink" target="_blank" style="display:none;">
+                                <button type="button" class="el-button el-button--danger" id="l_modifyBankBtn">
+                                    <span data-i18n="bank_card.modifyHint">修改银行卡请联系在线客服</span>
+                                </button>
+                            </a>
+                            <a href="./add_card.html" id="addBankWrap">
+                                <button type="button" class="el-button el-button--danger" id="l_addBankBtn">
+                                    <span data-i18n="bank_card.bindBankCard">绑定银行卡</span>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <div>
+                    <a href="./index.html" class="t_span one">
+                        <i></i>
+                        <span data-i18n="nav.home">首页</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./recharge.html" class="t_span two">
+                        <i></i>
+                        <span data-i18n="nav.recharge">充值</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./hold.html" class="t_span three">
+                        <i></i>
+                        <span data-i18n="nav.hold">持仓</span>
+                    </a>
+                </div>
+                <div>
+                    <a onClick="" class="t_span four">
+                        <i></i>
+                        <span data-i18n="nav.customerService">客服</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./user.html" class="t_span five">
+                        <i></i>
+                        <span data-i18n="nav.my">我的</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 添加i18n.js -->
+    <script src="./static/js/i18n.js"></script>
+    <script src="./static/js/jquery-1.9.1.min.js"></script>
+    <script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+    <script src="./static/js/utils.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            // 初始化语言
+            const savedLang = localStorage.getItem('preferredLanguage') || 'zh-CN';
+            I18n.init(savedLang).then(() => {
+                console.log('语言初始化完成:', I18n.currentLang);
+                loadBankCards();
+            });
+            
+            // 监听语言变化
+            $(document).on('languageChanged', function(event, lang) {
+                console.log('语言已切换到:', lang);
+                // 重新加载银行列表（如果需要更新显示的文本）
+                loadBankCards();
+            });
+            
+            // 高亮当前导航
+            highlightNav();
+        });
+        function maskString(str) {
+          if (str.length <= 8) {
+            return str; // 如果字符串长度小于等于8，直接返回原字符串
+          }
+          
+          const firstFour = str.substring(0, 4);
+          const lastFour = str.substring(str.length - 4);
+          const middleStars = '*'.repeat(str.length - 8);
+          
+          return firstFour + middleStars + lastFour;
+        }
+        function getServiceUrl() {
+            try {
+                const config = JSON.parse(localStorage.getItem('config') || '{}');
+                return config.service || '';
+            } catch (e) {
+                return '';
+            }
+        }
+
+        async function ensureServiceLink() {
+            let serviceUrl = getServiceUrl();
+            if (!serviceUrl && typeof loadSiteConfig === 'function') {
+                const config = await loadSiteConfig();
+                serviceUrl = config.service || '';
+            }
+            if (serviceUrl) {
+                $('#modifyBankServiceLink').attr('href', serviceUrl);
+            }
+            return serviceUrl;
+        }
+
+        function updateBankActionButtons(hasCards) {
+            if (hasCards) {
+                $('#modifyBankServiceLink').show();
+                $('#addBankWrap').hide();
+                ensureServiceLink();
+            } else {
+                $('#modifyBankServiceLink').hide();
+                $('#addBankWrap').show();
+            }
+        }
+
+        function loadBankCards() {
+            // 更新按钮文本
+            $('#l_modifyBankBtn span').text(I18n.t('bank_card.modifyHint'));
+            $('#l_addBankBtn span').text(I18n.t('bank_card.bindBankCard'));
+            
+            // 显示加载中
+            $('#banklist').html('<div class="loading">' + I18n.t('bank_card.loading') + '</div>');
+            
+            AjaxUtil.get('/index/user/getUserBankList').then(res => {
+                if(res.code == 1 && res.data && res.data.list) {
+                    localStorage.setItem('bankCard', JSON.stringify(res.data.list));
+                    
+                    if (res.data.list.length > 0) {
+                        let banklistStr = '';
+                        res.data.list.forEach(item => {
+                            // 根据类型显示不同的信息
+							const bankText = item.type == 2 ?  '' :  (item.bank);
+                            const displayText = item.type == 2 ? 
+                                (maskString(item.usdt) || I18n.t('bank_card.walletAddress')) : 
+                                (maskString(item.account) || I18n.t('bank_card.cardNumber'));
+                            
+                            const nameText = item.type == 2 ? 
+                                (item.name || '') : 
+                                (item.name || I18n.t('bank_card.name'));
+                            
+                            banklistStr += `<ul class="f_withdraw">
+                                <li class="banklist">
+                                    <span>${bankText} ${displayText}</span>
+                                    <span>${nameText}</span>
+                                    <i data-myid="${item.id || ''}" class="awesome"></i>
+                                </li>
+                            </ul>`;
+                        });
+                        
+                        $('#banklist').html(banklistStr);
+                        updateBankActionButtons(true);
+                    } else {
+                        $('#banklist').html('<div class="no-data">' + I18n.t('bank_card.noBankCards') + '</div>');
+                        updateBankActionButtons(false);
+                    }
+                } else {
+                    $('#banklist').html('<div class="no-data">' + I18n.t('bank_card.noBankCards') + '</div>');
+                    updateBankActionButtons(false);
+                }
+            })
+        }
+
+        $(document).on('click', '#modifyBankServiceLink', async function(e) {
+            let serviceUrl = $(this).attr('href') || '';
+            if (!serviceUrl || serviceUrl === '#') {
+                e.preventDefault();
+                serviceUrl = await ensureServiceLink();
+                if (serviceUrl) {
+                    window.open(serviceUrl, '_blank');
+                }
+            }
+        });
+        
+        function highlightNav() {
+            var nav = "bank_card";
+            $(".t_span").removeClass("router-link-exact-active");
+            
+            // 由于银行卡管理在"我的"页面内，高亮"我的"导航
+            if (nav == "bank_card" || nav == "user") {
+                $(".five").addClass("router-link-exact-active");
+            }
+        }
+        
+        // 确保语言包中有必要的键名
+        function ensureBankCardTranslations() {
+            if (!I18n.translations.bank_card) {
+                I18n.translations.bank_card = {};
+            }
+            
+            // 确保必要的键名存在
+            const requiredKeys = {
+                'title': '银行卡管理',
+                'modifyHint': '修改银行卡请联系在线客服',
+                'bindBankCard': '绑定银行卡',
+                'name': '姓名',
+                'cardNumber': '银行卡号',
+                'walletAddress': '钱包地址',
+                'noBankCards': '暂无银行卡',
+                'loading': '加载中...'
+            };
+            
+            for (const [key, defaultValue] of Object.entries(requiredKeys)) {
+                if (!I18n.translations.bank_card[key]) {
+                    I18n.translations.bank_card[key] = defaultValue;
+                }
+            }
+        }
+        
+        // 调用确保翻译存在
+        ensureBankCardTranslations();
+    </script>
+</body>
+</html>

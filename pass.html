@@ -1,0 +1,45 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	
+	<meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+	<title>欢迎您！</title>
+	<script type="text/javascript" src="./static/js/jquery-1.9.1.min.js"></script>
+	<link rel="stylesheet" href="">
+	<style type="text/css" media="screen">
+		input[type=text]{
+			padding: 10px 8px;
+		}
+		input[type=button]{
+			padding: 8px 8px;
+		}
+	</style>
+</head>
+<body>
+<div style="text-align: center;margin-top:200px">
+<h2 style="margin-bottom: 20px">商家编码</h2>
+	<form >
+		<input type="text" name="pass" placeholder="请输入商家编码">
+		<input type="button" name="" value="提 交" placeholder="">
+	</form>
+</div>
+</body>
+<script>
+	let code='0065'
+	if (localStorage.getItem('code')) {
+		location.href = './login.html'
+	}
+	$("input[type=button]").click(function(){
+		
+		if($('input[type=text]').val()==code){
+			localStorage.setItem('code',code)
+			location.href='./login.html'
+		}
+
+	})
+</script>
+</html>

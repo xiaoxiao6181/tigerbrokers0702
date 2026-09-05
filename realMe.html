@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="zh-CN" style="    font-size: 35px;">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title data-i18n="realMe.title">实名认证</title>
+    <link rel="stylesheet" type="text/css" href="./static/css/common.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/tipmask.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+        body {
+            width: 100%;
+            height: 815px;
+            margin: 0;
+            padding: 0;
+            background-color: #F7F8FA;
+            font-family: 'Noto Sans SC', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+        .tipMask .cont {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .header {
+            width: 100%;
+            height: 44px;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border-bottom: 1px solid #eee;
+        }
+
+        .back-icon {
+            position: absolute;
+            left: 16px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .shield-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+        }
+
+        .shield-icon-bg {
+            width: 70px;
+            height: 70px;
+            background-color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .status-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        .status-desc {
+            font-size: 12px;
+            color: #999;
+            margin-top: 8px;
+            text-align: center;
+            width: 300px;
+            line-height: 1.4;
+        }
+
+        .form-card {
+            width: 349px;
+            background-color: #fff;
+            border-radius: 12px;
+            margin: 30px auto 0;
+            padding: 20px 16px;
+            box-sizing: border-box;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-box {
+            width: 100%;
+            height: 44px;
+            background-color: #F7F8FA;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* 当处于审核中状态时，输入框样式 */
+        .input-box.disabled {
+            background-color: #f0f0f0; /* 浅灰色背景表示不可编辑 */
+            color: #999; /* 灰色文字 */
+        }
+
+        input[type="text"].form-input {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* 当处于审核中状态时，输入框样式 */
+        input[type="text"].form-input.disabled {
+            color: #999;
+            background: transparent;
+            /* 关键：防止编辑 */
+            pointer-events: none;
+            user-select: none;
+        }
+
+        input[type="text"].form-input::placeholder {
+            color: #999;
+        }
+
+        .upload-area {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+        }
+
+        .upload-box {
+            width: 152px;
+            height: 100px;
+            background-color: #F7F8FA;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer; /* 添加光标提示 */
+            position: relative; /* 为预览图片定位做准备 */
+            overflow: hidden; /* 隐藏超出部分 */
+        }
+
+        /* 当处于审核中状态时，上传框样式 */
+        .upload-box.disabled {
+            cursor: not-allowed; /* 禁用光标 */
+            opacity: 0.6; /* 半透明效果 */
+            pointer-events: none; /* 防止点击 */
+        }
+
+        .id-icon {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 8px;
+        }
+
+        .upload-text {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 保持宽高比并填满容器 */
+            display: none; /* 初始隐藏 */
+        }
+
+        .submit-btn {
+            width: 349px;
+            height: 44px;
+            background-color: #3B82F6;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px auto 0;
+            cursor: pointer;
+        }
+
+        .shield-img {
+            width: 40px;
+            height: 40px;
+            background: #bbbbbb;
+            border-radius: 8px;
+        }
+
+        /* 隐藏 file input */
+        input[type="file"] {
+            display: none;
+        }
+		
+		
+		
+		.reason-card {
+			background-color: #FFF0F0;
+			border-radius: 8px;
+			margin: 30px 16px;
+			padding: 20px 18px;
+		}
+		
+		.reason-title {
+			font-size: 14px;
+			font-weight: 600;
+			color: #C0392B;
+			margin-bottom: 12px;
+		}
+		
+		.reason-content {
+			font-size: 12px;
+			color: #666666;
+			line-height: 1.6;
+			margin-bottom: 20px;
+			text-align: justify;
+		}
+		
+		.btn-group {
+			display: flex;
+			justify-content: space-between;
+			gap: 10px;
+		}
+		
+		.btn-outline {
+			flex: 1;
+			height: 36px;
+			background-color: #ffffff;
+			border-radius: 4px;
+			border: 1px solid #E5E5E5;
+			font-size: 14px;
+			color: #333333;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+		}
+		
+		.btn-primary {
+			flex: 1;
+			height: 36px;
+			background-color: #3B82F6;
+			border-radius: 4px;
+			font-size: 14px;
+			color: #ffffff;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+		}
+		
+		.info-list {
+			margin: 16px;
+			background-color: #ffffff;
+			border-radius: 8px;
+			padding: 0 16px;
+		}
+		
+		.info-item {
+			height: 50px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 1px solid #F5F5F5;
+		}
+		
+		.info-item:last-child {
+			border-bottom: none;
+		}
+		
+		.info-label {
+			font-size: 14px;
+			color: #666666;
+		}
+		
+		.info-value {
+			font-size: 14px;
+			color: #333333;
+		}
+    </style>
+</head>
+<body style="overflow: auto;" >
+    <div class="header">
+        <div class="back-icon" onClick="javascript:history.back()" data-x="16" data-y="18">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 18L9 12L15 6" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+        </div>
+        <div class="header-title" data-x="159" data-y="18" data-i18n="realMe.title">实名认证</div>
+    </div>
+    <div class="shield-container">
+        <div class="shield-icon-bg" data-x="155" data-y="88">
+            <img src="/static/img/mine2.png" class="shield-img" alt="Shield Icon" style="background:transparent;width:40px;height:40px;">
+        </div>
+        <div class="status-title" id="statusTitle" data-x="146" data-y="182" data-i18n="realMe.statusPending">待实名认证</div>
+        <div class="status-desc" id="statusDesc" data-x="62" data-y="217" data-i18n="realMe.descPending">请完善您的实名信息，便于我们更好地为您服务</div>
+    </div>
+	<!-- 审核未通过开始 -->
+	<div class="reason-card refuse" style="display: none;" data-x="16" data-y="268">
+		<div class="reason-title" data-x="59" data-y="288" data-i18n="realMe.reasonCardTitle">审核未通过原因</div>
+		<div class="reason-content" data-x="59" data-y="318">身份及照片不清晰，请重新上传清晰的证件照片。照片需要能够清楚辨识所有信息，确保四角完整，无反光和遮挡。
+		</div>
+		<div class="btn-group">
+			<div class="btn-outline" data-x="35" data-y="388" data-i18n="realMe.buttonContactSupport">联系客服</div>
+			<div class="btn-primary" data-x="196" data-y="388" data-i18n="realMe.buttonReAuth">重新认证</div>
+		</div>
+	</div>
+	<div class="info-list refuse" style="display: none;" data-x="16" data-y="454">
+		<div class="info-item"><span class="info-label" data-x="55" data-y="471" data-i18n="realMe.labelSubmitTime">提交时间</span><span
+				class="info-value create_time" data-x="212" data-y="471"></span></div>
+		<div class="info-item"><span class="info-label" data-x="55" data-y="521" data-i18n="realMe.labelReviewTime">审核时间</span><span
+				class="info-value update_time" data-x="212" data-y="521"></span></div>
+	</div>
+	<!-- 审核未通过结束 -->
+	<!-- 审核开始 -->
+    <div class="form-card apply">
+        <span class="form-label" data-x="31" data-y="285" data-i18n="realMe.labelRealName">真实姓名</span>
+        <div class="input-box" id="realNameBox" data-x="31" data-y="306">
+            <input type="text" class="form-input" id="realNameInput" autocomplete="nope" name="realName" placeholder="请输入您的真实姓名" data-i18n="[placeholder]realMe.placeholderRealName"/>
+        </div>
+        <span class="form-label" data-x="31" data-y="363" data-i18n="realMe.labelIdCardNumber">身份证号码</span>
+        <div class="input-box" id="idCardNumberBox" data-x="31" data-y="384">
+            <input type="text" class="form-input" id="idCardNumberInput" autocomplete="nope" name="idCardNumber" placeholder="请输入您的身份证号码" data-i18n="[placeholder]realMe.placeholderIdCardNumber"/>
+        </div>
+<!--        
+        <span class="form-label" data-x="31" data-y="363" data-i18n="reg.paymentPassword">支付密码</span>
+        <div class="input-box"  data-x="31" data-y="384">
+            <input type="password" class="form-input" id="password2" autocomplete="nope" name="password2" placeholder="请输入您的支付密码" data-i18n="reg.paymentPasswordPlaceholder"/>
+        </div>
+        <span class="form-label" data-x="31" data-y="363" autocomplete="nope" data-i18n="reg.confirmPaymentPassword">确认密码</span>
+        <div class="input-box" data-x="31" data-y="384">
+            <input type="password" class="form-input" id="confirm_password2" name="confirm_password2" placeholder="请输入您的确认密码" data-i18n="reg.confirmPaymentPasswordPlaceholder"/>
+        </div> -->
+        
+        <span class="form-label" data-x="31" data-y="441" data-i18n="realMe.labelIdCardPhotos">证件照片</span>
+        <div class="upload-area" id="uploadArea">
+            <!-- 隐藏的文件输入框 -->
+            <input type="file" id="frontImageInput" accept="image/*" onchange="handleFileSelect(event, 'front')">
+            <input type="file" id="backImageInput" accept="image/*" onchange="handleFileSelect(event, 'back')">
+
+            <div class="upload-box" id="frontUploadBox" onclick="chooseFile('front')" data-x="31" data-y="467">
+                <img class="preview-image" id="frontPreviewImage" src="" alt="Front Preview" />
+                <svg class="id-icon" id="frontDefaultIcon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4" y="8" width="40" height="32" rx="4" fill="#9CA3AF"></rect>
+                    <circle cx="14" cy="20" r="4" fill="white"></circle>
+                    <path d="M8 32C8 28.6863 10.6863 26 14 26C17.3137 26 20 28.6863 20 32" stroke="white" stroke-width="2"></path>
+                    <rect x="26" y="16" width="14" height="4" rx="1" fill="white"></rect>
+                    <rect x="26" y="24" width="14" height="4" rx="1" fill="white"></rect>
+                    <rect x="26" y="32" width="8" height="4" rx="1" fill="white"></rect>
+                </svg>
+                <span class="upload-text" id="frontUploadText" data-i18n="realMe.uploadFront">身份证人像面</span>
+            </div>
+            <div class="upload-box" id="backUploadBox" onclick="chooseFile('back')" data-x="197" data-y="467">
+                <img class="preview-image" id="backPreviewImage" src="" alt="Back Preview" />
+                <svg class="id-icon" id="backDefaultIcon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4" y="8" width="40" height="32" rx="4" fill="#9CA3AF"></rect>
+                    <rect x="14" y="16" width="20" height="4" rx="1" fill="white"></rect>
+                    <rect x="14" y="24" width="20" height="4" rx="1" fill="white"></rect>
+                    <rect x="14" y="32" width="10" height="4" rx="1" fill="white"></rect>
+                    <circle cx="36" cy="14" r="2" fill="white"></circle>
+                </svg>
+                <span class="upload-text" id="backUploadText" data-i18n="realMe.uploadBack">身份证国徽面</span>
+            </div>
+        </div>
+    </div>
+	<!-- 审核结束 -->
+	<!-- 审核成功开始 -->
+	<div class="info-list pass" style="display: none;" data-x="16" data-y="454">
+		<div class="info-item"><span class="info-label " data-x="55" data-y="471" data-i18n="realMe.labelName">姓名</span><span
+				class="info-value name" data-x="212" data-y="471"></span></div>
+		<div class="info-item"><span class="info-label" data-x="55" data-y="521" data-i18n="realMe.labelIdCard">身份证号</span><span
+				class="info-value idCard" data-x="212" data-y="521"></span></div>
+		<div class="info-item"><span class="info-label" data-x="55" data-y="521" data-i18n="realMe.labelReviewStatus">审核状态</span><span
+				class="info-value " style="color: green;" data-x="212" data-y="521" data-i18n="realMe.statusValuePassed">已通过</span></div>
+	</div>
+	<!-- 审核成功结束 -->
+    <div class="tipMask hide">
+        <div class="cont">
+            <p class="title" data-i18n="common.prompt">温馨提示</p>
+            <p class="stitle contents"></p>
+            <div id="msgBtn">
+                <div class="confirm guanbi" data-i18n="common.confirm">确定</div>
+            </div>
+        </div>
+    </div>
+    <div class="submit-btn apply" id="submitBtn" onclick="submitVerification()" data-x="17" data-y="608" data-i18n="realMe.buttonSubmit">提交认证</div>
+    <script src="./static/js/i18n.js"></script>
+    <script src="./static/js/jquery-1.9.1.min.js"></script>
+    <script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+    <script src="./static/js/utils.js"></script>
+    <script>
+        // 存储已上传的图片 URL
+        let uploadedFrontUrl = null;
+        let uploadedBackUrl = null;
+		const savedLang = localStorage.getItem('preferredLanguage') || 'zh-CN';
+		I18n.init(savedLang).then(() => {
+		    console.log('语言初始化完成:', I18n.currentLang);
+	
+		});
+        // 页面加载时获取认证信息
+        AjaxUtil.get('/index/user/getAuthCertification').then(res => {
+            console.log(res);
+			
+            if (res.code == 1&&res.data.info) {
+                const info = res.data.info;
+                $("#realNameInput").val(info.name);
+                $("#idCardNumberInput").val(info.idcard);
+
+                // 更新全局变量
+                uploadedFrontUrl = info.idcard_front_image;
+                uploadedBackUrl = info.idcard_side_image;
+
+                // --- 关键修改：无论是否审核中，都先渲染图片 ---
+                if (info.idcard_front_image) {
+                    // 直接设置 src，然后调用 updatePreview 以确保 UI 状态正确
+                    $("#frontPreviewImage").attr('src', mediaUrl(info.idcard_front_image));
+                    updatePreview(info.idcard_front_image, 'front');
+                }
+                if (info.idcard_side_image) {
+                    $("#backPreviewImage").attr('src', mediaUrl(info.idcard_side_image));
+                    updatePreview( info.idcard_side_image, 'back');
+                }
+                // --- 修改结束 ---
+				// info.review_status=0
+				
+				if (info.review_status == 1) {
+				    // 审核通过
+					$('#statusTitle').text(I18n.t('realMe.statusPassed'))
+					$('#statusDesc').text(I18n.t('realMe.descPassed'))
+					
+					 $(".name").text(info.name.slice(0,1)+'**')
+					 $(".idCard").text(maskString(info.idcard))
+					$(".pass").show()
+					$(".apply").hide()
+					$(".refuse").hide()
+
+				}
+                if (info.review_status == 0) {
+                    // 审核中
+					 $('#statusTitle').text(I18n.t('realMe.statusReviewing')) // 修正：使用正确的状态文本
+					 $('#statusDesc').text(I18n.t('realMe.descReviewing'))     // 修正：使用正确的描述文本
+					$(".apply").show()
+					$(".refuse").hide()
+                    setReviewingState(true); // 调用函数设置审核中状态
+                }
+				if (info.review_status == 2) {
+				    // 拒绝
+					let config=localStorage.getItem('config')
+					if(config){
+						config=JSON.parse(config)
+						$(".btn-outline").click(function(){
+							location.href=config.service
+						})
+						
+					}
+					$('#statusTitle').text(I18n.t('realMe.statusFailed'))
+					$('#statusDesc').text(I18n.t('realMe.descFailed'))
+					$(".reason-content").text(info.explain)
+					$(".create_time").text(info.create_time)
+					$('.update_time').text(info.review_time)
+					
+					$(".apply").hide()
+					$(".refuse").show()
+				    // location.href='./realMeRefuse.html'
+				}
+				
+                // 如果 review_status 不是 0，则保持初始状态（待认证）
+            } else {
+                // 获取信息失败，也可以考虑给用户提示，或者保持初始状态
+                console.error("获取认证信息失败:", res);
+            }
+        })
+
+        // 设置审核中状态
+        function setReviewingState(isReviewing) {
+            const realNameInput = document.getElementById('realNameInput');
+            const idCardNumberInput = document.getElementById('idCardNumberInput');
+            const realNameBox = document.getElementById('realNameBox');
+            const idCardNumberBox = document.getElementById('idCardNumberBox');
+            const frontUploadBox = document.getElementById('frontUploadBox');
+            const backUploadBox = document.getElementById('backUploadBox');
+            const submitBtn = document.getElementById('submitBtn');
+            const statusTitle = document.getElementById('statusTitle');
+            const statusDesc = document.getElementById('statusDesc');
+
+            if (isReviewing) {
+                // 禁用输入框
+                realNameInput.disabled = true;
+                idCardNumberInput.disabled = true;
+                // 添加视觉上的禁用样式
+                realNameInput.classList.add('disabled');
+                idCardNumberInput.classList.add('disabled');
+                realNameBox.classList.add('disabled');
+                idCardNumberBox.classList.add('disabled');
+                // 禁用上传区域（通过CSS类）
+                frontUploadBox.classList.add('disabled');
+                backUploadBox.classList.add('disabled');
+                // 隐藏提交按钮
+                submitBtn.style.display = 'none';
+                // 更新标题和描述
+                statusTitle.textContent = I18n.t('realMe.statusReviewing');
+                statusDesc.textContent = I18n.t('realMe.descReviewing');
+            } else {
+                // 启用输入框
+                realNameInput.disabled = false;
+                idCardNumberInput.disabled = false;
+                // 移除视觉上的禁用样式
+                realNameInput.classList.remove('disabled');
+                idCardNumberInput.classList.remove('disabled');
+                realNameBox.classList.remove('disabled');
+                idCardNumberBox.classList.remove('disabled');
+                // 启用上传区域
+                frontUploadBox.classList.remove('disabled');
+                backUploadBox.classList.remove('disabled');
+                // 显示提交按钮
+                submitBtn.style.display = 'flex'; // 或 'block'，取决于你的 CSS
+                // 恢复标题和描述
+                statusTitle.textContent = I18n.t('realMe.statusPending');
+                statusDesc.textContent = I18n.t('realMe.descPending');
+            }
+        }
+		$(".btn-primary").click(function(){
+			$(".apply").show()
+			$(".refuse").hide()
+			setReviewingState(false); // 调用函数设置审核中状态
+		})
+        // 触发文件选择对话框
+        function chooseFile(type) {
+            // 检查是否处于审核中状态，如果是，则不允许上传
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn.style.display === 'none') { // 通过按钮隐藏来判断状态
+                 showAlert(I18n.t('realMe.alertReviewingNoEdit'));
+                 return; // 阻止后续操作
+            }
+
+            if (type === 'front') {
+                document.getElementById('frontImageInput').click();
+            } else if (type === 'back') {
+                document.getElementById('backImageInput').click();
+            }
+        }
+
+        // 将图片统一转为 jpg，避免部分手机上传 jpeg/heic 等后缀被拒
+        function prepareImageForUpload(file) {
+            return new Promise(function(resolve) {
+                if (!file || !file.type || file.type.indexOf('image/') !== 0) {
+                    resolve(file);
+                    return;
+                }
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var img = new Image();
+                    img.onload = function() {
+                        var canvas = document.createElement('canvas');
+                        var maxSide = 1920;
+                        var width = img.width;
+                        var height = img.height;
+                        if (width > maxSide || height > maxSide) {
+                            if (width >= height) {
+                                height = Math.round(height * maxSide / width);
+                                width = maxSide;
+                            } else {
+                                width = Math.round(width * maxSide / height);
+                                height = maxSide;
+                            }
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                        if (canvas.toBlob) {
+                            canvas.toBlob(function(blob) {
+                                if (!blob) {
+                                    resolve(file);
+                                    return;
+                                }
+                                var baseName = (file.name || 'idcard').replace(/\.[^.]+$/, '');
+                                resolve(new File([blob], baseName + '.jpg', { type: 'image/jpeg' }));
+                            }, 'image/jpeg', 0.85);
+                        } else {
+                            resolve(file);
+                        }
+                    };
+                    img.onerror = function() {
+                        resolve(file);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.onerror = function() {
+                    resolve(file);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // 处理文件选择并立即上传
+        async function handleFileSelect(event, type) {
+            // 检查是否处于审核中状态，如果是，则不允许上传
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn.style.display === 'none') { // 通过按钮隐藏来判断状态
+                 showAlert(I18n.t('realMe.alertReviewingNoSubmit'));
+                 event.target.value = ''; // 清空 input 文件选择
+                 return; // 阻止后续操作
+            }
+
+            const file = event.target.files[0];
+            if (file) {
+                try {
+                    console.log(`开始上传${type === 'front' ? '人像面' : '国徽面'}图片...`);
+
+                    const preparedFile = await prepareImageForUpload(file);
+                    const imageUrl = await uploadImage(preparedFile, type);
+
+                    // 上传成功后，更新对应变量和界面预览
+                    if (type === 'front') {
+                        uploadedFrontUrl = imageUrl;
+                    } else if (type === 'back') {
+                        uploadedBackUrl = imageUrl;
+                    }
+                    updatePreview(imageUrl, type); // 传入服务器URL进行预览
+                    console.log(`${type === 'front' ? '人像面' : '国徽面'}图片上传成功:`, imageUrl);
+
+                } catch (error) {
+                    console.error(`上传${type === 'front' ? '人像面' : '国徽面'}图片失败:`, error);
+                    alert(`上传${type === 'front' ? '人像面' : '国徽面'}图片失败: ${error.message}`);
+                    // 可选：重置文件输入框或上传区域状态
+                    event.target.value = ''; // 清空 input 文件选择
+                    // 上传失败时，不应该影响已存在的图片
+                    // 我们需要调用 updatePreview 来恢复之前的状态
+                    // 如果之前没有上传，则恢复到初始状态；如果之前有上传，则保持原样。
+                    if (type === 'front') {
+                        updatePreview(uploadedFrontUrl, type); // 传入全局变量，它可能是 null，也可能是旧 URL
+                    } else if (type === 'back') {
+                        updatePreview(uploadedBackUrl, type); // 传入全局变量
+                    }
+                }
+            } else {
+                // 用户取消了文件选择
+                // event.target.files.length === 0
+                // 此时只需恢复当前操作项的视图，基于其全局变量状态
+                if (type === 'front') {
+                     updatePreview(uploadedFrontUrl, type); // 恢复当前项的视图
+                } else if (type === 'back') {
+                     updatePreview(uploadedBackUrl, type); // 恢复当前项的视图
+                }
+            }
+        }
+
+
+        // 更新上传框内的预览图片
+        function updatePreview(serverUrl, type) {
+            let previewImgId, defaultIconId, uploadTextId, uploadBoxId;
+
+            if (type === 'front') {
+                previewImgId = 'frontPreviewImage';
+                defaultIconId = 'frontDefaultIcon';
+                uploadTextId = 'frontUploadText';
+                uploadBoxId = 'frontUploadBox';
+            } else if (type === 'back') {
+                previewImgId = 'backPreviewImage';
+                defaultIconId = 'backDefaultIcon';
+                uploadTextId = 'backUploadText';
+                uploadBoxId = 'backUploadBox';
+            } else {
+                console.error("Unknown image type:", type);
+                return;
+            }
+
+            const previewImg = document.getElementById(previewImgId);
+            const defaultIcon = document.getElementById(defaultIconId);
+            const uploadText = document.getElementById(uploadTextId);
+            const uploadBox = document.getElementById(uploadBoxId);
+
+            if (serverUrl) {
+                // 显示服务器返回的图片 URL
+                previewImg.src = mediaUrl(serverUrl);
+                previewImg.style.display = 'block';
+                defaultIcon.style.display = 'none';
+                uploadText.style.display = 'none'; // 隐藏文字提示
+            } else {
+                // 没有 URL，恢复默认状态
+                previewImg.src = '';
+                previewImg.style.display = 'none';
+                defaultIcon.style.display = 'block';
+                uploadText.style.display = 'block';
+                uploadText.textContent = type === 'front' ? I18n.t('realMe.uploadFront') : I18n.t('realMe.uploadBack'); // 恢复原始文字
+            }
+
+            // 根据全局变量的最新值更新文字提示
+            // 这个逻辑在审核中状态下可能不太适用（因为不能点击更换），但保留以保证功能完整性
+            if (type === 'front') {
+                if (uploadedFrontUrl) { // 使用全局变量
+                    uploadText.textContent = I18n.t('realMe.uploadChange');
+                } else {
+                    uploadText.textContent = I18n.t('realMe.uploadFront');
+                }
+            } else if (type === 'back') {
+                if (uploadedBackUrl) { // 使用全局变量
+                    uploadText.textContent = I18n.t('realMe.uploadChange');
+                } else {
+                    uploadText.textContent = I18n.t('realMe.uploadBack');
+                }
+            }
+        }
+
+
+        function parseUploadResponse(response) {
+            if (!response) return null;
+            if (response.url) return response.url;
+            if (response.data && response.data.url) return response.data.url;
+            return null;
+        }
+
+        function parseUploadErrorMessage(xhr, status) {
+            if (xhr && xhr.responseText) {
+                try {
+                    const res = JSON.parse(xhr.responseText);
+                    if (res.error && res.error.message) return res.error.message;
+                    if (res.info) return res.info;
+                    if (res.msg) return res.msg;
+                } catch (e) {}
+            }
+            if (xhr && xhr.status === 404) return '上传接口不存在';
+            if (xhr && xhr.status === 0) return '无法连接服务器，请检查网络或 API 地址';
+            return `上传图片失败: ${status || (xhr && xhr.statusText) || 'error'}`;
+        }
+
+        // 上传单张图片
+        function uploadImage(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            const token = localStorage.getItem('token') || '';
+            const uploadPaths = ['/index/index/upload.html', '/index/index/upload'];
+
+            function tryUpload(index) {
+                return new Promise((resolve, reject) => {
+                    if (index >= uploadPaths.length) {
+                        reject(new Error('上传图片失败'));
+                        return;
+                    }
+
+                    $.ajax({
+                        url: baseConfig.baseUrl + uploadPaths[index],
+                        method: 'POST',
+                        processData: false,
+                        contentType: false,
+                        dataType: 'json',
+                        data: formData,
+                        headers: {
+                            Token: token,
+                            token: token,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        success: function(response) {
+                            if (response && response.uploaded === false) {
+                                const message = (response.error && response.error.message) || '上传失败';
+                                reject(new Error(message));
+                                return;
+                            }
+                            const url = parseUploadResponse(response);
+                            if (url) {
+                                resolve(url);
+                                return;
+                            }
+                            tryUpload(index + 1).then(resolve, reject);
+                        },
+                        error: function(xhr, status) {
+                            if (index + 1 < uploadPaths.length) {
+                                tryUpload(index + 1).then(resolve, reject);
+                                return;
+                            }
+                            reject(new Error(parseUploadErrorMessage(xhr, status)));
+                        }
+                    });
+                });
+            }
+
+            return tryUpload(0);
+        }
+
+        // 提交认证信息 - 使用 $.ajax
+        async function submitVerification() {
+            const realName = document.getElementById('realNameInput').value.trim();
+            const idCardNumber = document.getElementById('idCardNumberInput').value.trim();
+            
+            // const password2 = document.getElementById('password2').value.trim();
+            // const confirm_password2 = document.getElementById('confirm_password2').value.trim();
+
+            // 检查是否已上传两张图片
+            if (!uploadedFrontUrl || !uploadedBackUrl) {
+                showAlert(I18n.t('realMe.alertUploadBothPhotos'));
+                return;
+            }
+
+            if (!realName || !idCardNumber) {
+                showAlert(I18n.t('realMe.alertFillAllFields'));
+                return;
+            }
+            if (!isValidChineseName(realName)) {
+                msg(I18n.t('common.prompt'), I18n.t('reg.validation.nameInvalid'), 1);
+                return false;
+            }
+			if(!isValidAlphanumeric(idCardNumber)){
+				msg(I18n.t('common.prompt'), I18n.t('reg.idCard')+I18n.t('common.check'), 1);
+	
+				return false;
+			}
+			
+			// if (!password2) {
+   //              msg(I18n.t('common.prompt'), I18n.t('reg.validation.paymentPasswordRequired'), 1);
+   //              return;
+   //          }
+   //          if (!confirm_password2) {
+   //              msg(I18n.t('common.prompt'), I18n.t('reg.validation.confirmPaymentPasswordRequired'), 1);
+   //              return;
+   //          }
+   //          if (password2 != confirm_password2) {
+   //              msg(I18n.t('common.prompt'), I18n.t('reg.validation.paymentPasswordMismatch'), 1);
+   //              return;
+   //          }
+            
+            try {
+                console.log('提交认证信息...');
+                const response = await $.ajax({
+                    url: baseConfig.baseUrl+'/index/user/addAuthCertification',
+                    method: 'POST',
+                    contentType: 'application/json', // 发送 JSON
+                    data: JSON.stringify({
+                        name: realName,
+                        idcard: idCardNumber,
+                        // password2:password2,
+                        // confirm_password2:confirm_password2,
+                        idcard_front_image: uploadedFrontUrl, // 使用已上传的 URL
+                        idcard_side_image: uploadedBackUrl  // 使用已上传的 URL
+                    }),
+                    success: function(result, textStatus, jqXHR) {
+                        if (result.code == 1) {
+							// idCard
+                            msg(I18n.t('common.prompt')+I18n.t('common.prompt'), result.info, 2, "./user.html");
+                        } else {
+                            msg(I18n.t('common.prompt'), result.info , 1);
+                        }
+                        console.log('认证提交成功:', result);
+                        // 可以在这里添加跳转或其他成功后操作
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Submit Error:', error);
+                        console.error('Response Text:', xhr.responseText); // 便于调试
+                        throw new Error(`提交认证失败: ${error || xhr.statusText}`);
+                    }
+                });
+                // 注意：$.ajax 返回 Promise，但上面的写法 await $.ajax(...) 也是可以的
+                // 如果 $.ajax 抛出错误，这里会被 catch 捕获
+
+            } catch (error) {
+                console.error('提交认证过程中发生错误:', error);
+                showAlert(I18n.t('realMe.alertSubmitSuccess')); // 注意：这里原JS是"提交失败"，但变量名是alertSubmitSuccess，根据字面意思改成了成功提示，如需失败请改为其他key
+            }
+        }
+
+        // 简单的提示函数
+        function isValidChineseName(name) {
+            return /^[\u4e00-\u9fa5]+[·•]?[\u4e00-\u9fa5]+$/.test(name);
+        }
+
+        function showAlert(message) {
+            alert(message);
+        }
+    </script>
+</body>
+</html>

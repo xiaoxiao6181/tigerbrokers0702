@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title data-i18n="index.title">首页</title>
+    <link rel="icon" href="./static/img/back_logo.jpg" type="image/jpeg">
+    <style type="text/css">
+        html { font-size: 35px; }
+    </style>
+    <link rel="stylesheet" type="text/css" href="./static/css/common.css">
+    <script type="text/javascript" src="./static/js/bignumber.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./static/css/swiper.min.css" />
+    <style type="text/css">
+        body { background: #110e1f; overflow: auto; }
+        span { display: inline-block; }
+        .ad { width: 100%; margin: 0 auto; font-size: 0; }
+        .swiper-container2 .swiper-slide { line-height: 0; }
+        .swiper-container2 .swiper-slide img { width: 100%; }
+        #d1 { 
+            position: absolute; top: 110px; left: 20px; 
+            background: #fff; border-radius: 8px; padding: 15px; 
+            width: 80%; z-index: 999999 
+        }
+        .tc1 {
+            text-align: center;
+            line-height: 35px;
+            color: red;
+            font-size: 30px;
+        }
+        .mp {
+            line-height: 30px;
+            height: 368px;
+            overflow-y: scroll;
+        }
+        .mp img { width: 100%; }
+        .redbox {
+            height: 40px;
+            margin: 0 auto;
+            text-align: center;
+            margin-top: 8px;
+        }
+        .redbox .btn {
+            width: 100px;
+            margin: 0 auto;
+            text-align: center;
+            display: block;
+            height: 35px;
+            line-height: 35px;
+            color: #fff;
+            border-radius: 31px;
+            background: #000
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="ad">
+            <div class="swiper-container swiper-container2">
+                <div class="swiper-wrapper">
+                    <!-- Banner内容将通过JS动态生成 -->
+                </div>
+            </div>
+        </div>
+        <div class="box">
+            <div class="jun-content">
+                <div class="t_box slide">
+                    <div class="t_table">
+                        <ul class="t_lineher">
+                            <li data-i18n="index.products.hotProducts">热门产品</li>
+                            <li data-i18n="index.products.latest">最新</li>
+                            <li data-i18n="index.products.status">状态</li>
+                        </ul>
+                        <div class="t_con_home">
+                            <!-- 产品列表将通过JS动态生成 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <div>
+                    <a href="./index.html" class="t_span one">
+                        <i></i>
+                        <span data-i18n="nav.home">首页</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./recharge.html" class="t_span two">
+                        <i></i>
+                        <span data-i18n="nav.recharge">充值</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="hold.html" class="t_span three">
+                        <i></i>
+                        <span data-i18n="nav.hold">持仓</span>
+                    </a>
+                </div>
+                <div>
+                    <a onClick="" class="t_span four">
+                        <i></i>
+                        <span data-i18n="nav.customerService">客服</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./user.html" class="t_span five">
+                        <i></i>
+                        <span data-i18n="nav.my">我的</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="d1" class="cox xs" style="display: none;">
+        <div class="tc">
+           <input type="submit" 
+                   value="X" 
+                   class="btn btn1 close" 
+                   id="sday4"
+                   style="position:absolute;right:10px;top:10px;font-size:20px;display:block;width:25px;height:25px;"
+           
+                   value="X">
+		
+            <div class="tc1" data-i18n="index.announcement">最新公告</div>
+            <div class="mp">
+                <!-- 公告内容将通过JS动态生成 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 添加i18n.js -->
+    <script src="./static/js/i18n.js"></script>
+    <script src="./static/js/jquery-1.9.1.min.js"></script>
+    <script src="./static/js/swiper.min.js"></script>
+    <script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+    
+    <script type="text/javascript">
+        var mediaUrl = window.mediaUrl || function(path) { return path || ''; };
+        var preloadImages = window.preloadImages || function(urls) {
+            if (!urls || !urls.length) return Promise.resolve([]);
+            return Promise.all(urls.map(function(url) {
+                return new Promise(function(resolve) {
+                    if (!url) return resolve('');
+                    var img = new Image();
+                    img.onload = img.onerror = function() { resolve(url); };
+                    img.src = url;
+                });
+            }));
+        };
+		// let isInit=true
+        $(function() {
+            Promise.all([
+                I18n.init(localStorage.getItem('preferredLanguage') || 'zh-CN'),
+                AjaxUtil.get('/index/index/home', { loadingHide: true })
+            ]).then(function(results) {
+                renderHomeData(results[1]);
+            });
+            
+            var nav = "index";
+            if (nav == "index") {
+                $(".one").addClass("router-link-exact-active");
+            }
+            
+            $("#sday4").click(function() {
+                $("#d1").hide();
+            });
+
+            $(document).on('pageRestored', function() {
+                loadHomeData();
+            });
+        });
+        
+        var homeSwiper = null;
+
+        function loadHomeData() {
+            AjaxUtil.get('/index/index/home', { loadingHide: true }).then(renderHomeData);
+        }
+
+        function renderHomeData(res) {
+            if(!res || !res.data) return;
+            if(res.code != 1 && res.code != 200) return;
+
+            var banners = res.data.banner || [];
+            if (!Array.isArray(banners)) banners = Object.values(banners);
+            var products = res.data.product || [];
+            if (!Array.isArray(products)) products = Object.values(products);
+
+            var imageUrls = [];
+            banners.forEach(function(item) {
+                if (item.path) imageUrls.push(mediaUrl(item.path));
+            });
+            products.forEach(function(item) {
+                if (item.img) imageUrls.push(mediaUrl(item.img));
+            });
+
+            preloadImages(imageUrls).then(function() {
+                var swiperHtml = '';
+                banners.forEach(function(item) {
+                    swiperHtml += '<div class="swiper-slide"><a href="' + (item.url || '#') + '">' +
+                        '<img src="' + mediaUrl(item.path) + '" class="img-loaded" /></a></div>';
+                });
+                $(".swiper-wrapper").html(swiperHtml);
+
+                if (homeSwiper && homeSwiper.destroy) {
+                    homeSwiper.destroy(true, true);
+                }
+                homeSwiper = new Swiper('.swiper-container2', {
+                    loop: banners.length > 1,
+                    autoplay: banners.length > 1 ? { delay: 3000 } : false,
+                    pagination: { el: '.swiper-pagination' }
+                });
+
+                var productHtml = '';
+                $.each(products, function(k, v) {
+                    const statusText = (v.isclosetime == 1||v.isopen==0) ?
+                        I18n.t('index.products.closed') :
+                        I18n.t('index.products.trading');
+                    const statusColor = (v.isclosetime == 1||v.isopen==0) ? 'rgb(58, 142, 230)' : 'red';
+
+                    productHtml += '<ul style="background-image: url(\'./static/img/bg.png\'); background-repeat: no-repeat;"' +
+                        ' onclick="window.location.href=\'./goods.html?id=' + v.id + '\'">' +
+                        '<li><a href="./goods.html?id=' + v.id + '"><span>' +
+                        '<img src="' + mediaUrl(v.img) + '" alt="" class="img-loaded"></span></a>' +
+                        '<div><i class="identifying" style="display: none;"></i><span>' + v.title + '</span>' +
+                        '<span>' + v.code + '</span></div></li>' +
+                        '<li><span style="background-color: rgb(38, 168, 72);" id="p_' + v.id + '">' + v.Price + '</span></li>' +
+                        '<li><a href="./goods.html?id=' + v.id + '"><span class="t_status" style="background: ' + statusColor + '">' +
+                        statusText + '</span></a></li>' +
+                        '<li><a href="./goods.html?id=' + v.id + '"><i></i></a></li></ul>';
+                });
+                $(".t_con_home").html(productHtml);
+
+                var noticeContent = localStorage.getItem('noticeContent');
+                if(res.data.ater && res.data.ater.content) {
+                    if(noticeContent != res.data.ater.content){
+                        $(".tc1").text(res.data.ater.title || I18n.t('index.announcement'));
+                        $(".mp").html(res.data.ater.content || '');
+                        localStorage.setItem('noticeContent', res.data.ater.content);
+                        $("#d1").show();
+                    }
+                }
+            });
+        }
+        
+        // 实时更新价格（行情由服务器 domissions.php 写库，前端只读 ajaxDataNew）
+        var pricePollFail = 0;
+
+        function getdt() {
+            AjaxUtil.get('/index/index/ajaxDataNew', { loadingHide: true, timestamp: Date.now() }).then(function (datajson) {
+				if (datajson && datajson.code == 1) {
+					var pro = datajson.data || [];
+					if (!Array.isArray(pro)) pro = Object.values(pro);
+					$.each(pro, function(k, v) {
+					    const id = '#p_' + v.id;
+					    const pdid = '#pd_' + v.id;
+					    $(id).html(v.Price);
+					    
+					    if (v.is_rise == 2) {
+					        $(id).css('background', 'rgb(255, 1, 5)');
+					    } else {
+					        $(id).css('background', 'rgb(38, 168, 72)');
+					    }
+					    
+					    if (v.is_deal == 0) {
+					        $(pdid).css('background', 'rgb(58, 142, 230)');
+					        $(pdid).html(I18n.t('index.products.closed'));
+					    } else {
+					        $(pdid).html(I18n.t('index.products.trading'));
+					    }
+					});
+				}
+				pricePollFail = 0;
+			}, function () {
+				pricePollFail++;
+				if (pricePollFail === 1) {
+					console.warn('ajaxdataNew unavailable, price poll paused');
+				}
+			});
+            // $.get('/index/index/ajaxdata', '',
+            //     function(datajson) {
+            //         var pro = eval('(' + datajson + ')');
+            //         $.each(pro, function(k, v) {
+            //             const id = '#p_' + v.id;
+            //             const pdid = '#pd_' + v.id;
+            //             $(id).html(v.Price);
+                        
+            //             if (v.is_rise == 2) {
+            //                 $(id).css('background', 'rgb(255, 1, 5)');
+            //             } else {
+            //                 $(id).css('background', 'rgb(38, 168, 72)');
+            //             }
+                        
+            //             if (v.is_deal == 0) {
+            //                 $(pdid).css('background', 'rgb(58, 142, 230)');
+            //                 $(pdid).html(I18n.t('index.products.closed'));
+            //             } else {
+            //                 $(pdid).html(I18n.t('index.products.trading'));
+            //             }
+            //         });
+            //     });
+        }
+        
+        getdt();
+        window.setInterval(getdt, 3000);
+    </script>
+</body>
+</html>

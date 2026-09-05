@@ -1,0 +1,283 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title data-i18n="reg.title">会员注册</title>
+    <script type="text/javascript">
+        window.onload = function() {
+            var change_rem = ((window.screen.width > 450) ? 450 : window.screen.width) / 375 * 100;
+            document.getElementsByTagName("html")[0].style.fontSize = change_rem + "px";
+            window.onresize = function() {
+                change_rem = ((window.screen.width > 450) ? 450 : window.screen.width) / 375 * 100;
+                document.getElementsByTagName("html")[0].style.fontSize = change_rem + "px";
+            }
+        }
+    </script>
+    <link rel="stylesheet" type="text/css" href="./static/css/ionic.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/style.css">
+    <style type="text/css">
+        /* tipMask CSS */
+        .tipMask {
+            width: 100%;
+            height: 100%;
+            background: rgba(95,95,95,0.3);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 3;
+        }
+        .hide { display: none; }
+        .tipMask .cont {
+            width: 80%;
+            padding: 5% 10%;
+            border-radius: 5px;
+            background-color: #FFFFFF;
+            position: absolute;
+            top: 30%;
+            left: 10%;
+            text-align: center;
+        }
+        .tipMask .cont .title {
+            color: #191919;
+        }
+        .tipMask .cont .stitle {
+            color: #606060;
+        }
+        .tipMask .cont .confirm {
+            width: 100%;
+            height: .38rem;
+            background-color: #EF6F6C;
+            border-radius: 4px;
+            color: #fff;
+            line-height: .38rem;
+            text-align: center;
+            margin-top: .2rem;
+        }
+        .confirm { background-color: #0084FF !important; }
+    </style>
+</head>
+<body>
+    <div class="view-container signin-view">
+        <form>
+            <div class="sign_up">
+                <div class="sign_up_content">
+                    <ul class="sign_up_list">
+                        <li class="newinput">
+                            <span class="input-text" data-i18n="reg.name">姓名:</span>
+                            <input type="text" 
+                                   data-i18n-placeholder="reg.namePlaceholder" 
+                                   placeholder="姓名" 
+                                   id="name">
+                        </li>
+                        <li class="newinput">
+                            <span class="input-text" data-i18n="reg.username">用户名:</span>
+                            <input type="text" 
+                                   data-i18n-placeholder="reg.usernamePlaceholder" 
+                                
+                                   id="phone">
+                        </li>
+                        <li class="newinput">
+                            <span class="input-text" data-i18n="reg.loginPassword">登录密码:</span>
+                            <input type="password" 
+                                   data-i18n-placeholder="reg.loginPasswordPlaceholder" 
+                                   placeholder="登录密码" 
+                                   id="password">
+                        </li>
+                        <li class="newinput">
+                            <span class="input-text" data-i18n="reg.confirmPassword">确认密码:</span>
+                            <input type="password" 
+                                   data-i18n-placeholder="reg.confirmPasswordPlaceholder" 
+                                   placeholder="再次输入登录密码" 
+                                   id="confirm_password">
+                        </li>
+                        <li class="newinput">
+                           <span class="input-text" data-i18n="reg.paymentPassword">支付密码:</span>
+                           <input type="password"
+                                  data-i18n-placeholder="reg.paymentPasswordPlaceholder"
+                                  placeholder="支付密码"
+                                  id="password2">
+                        </li>
+                        <li class="newinput">
+                           <span class="input-text" data-i18n="reg.confirmPaymentPassword">确认密码:</span>
+                           <input type="password"
+                                  data-i18n-placeholder="reg.confirmPaymentPasswordPlaceholder"
+                                  placeholder="再次输入支付密码"
+                                  id="confirm_password2">
+                        </li>
+                        <!--<li class="newinput">-->
+                        <!--    <span class="input-text" data-i18n="reg.idCard">身份证:</span>-->
+                        <!--    <input type="text" -->
+                        <!--           data-i18n-placeholder="reg.idCardPlaceholder" -->
+                        <!--           placeholder="请输入身份证号码" -->
+                        <!--           id="idcard">-->
+                        <!--</li>-->
+                        <li class="newinput">
+                            <span class="input-text" data-i18n="reg.referralCode">推荐码:</span>
+                            <input data-i18n-placeholder="reg.referralCodePlaceholder" 
+                                   placeholder="邀请码(没有可不填)" 
+                                   id="spread_code" 
+                                   value="">
+                        </li>
+                    </ul>
+                    <button class="newbutton sign_up_btn" 
+                            id="reg_btn" 
+                            type="button"
+                            data-i18n="reg.registerButton">
+                        注册登陆
+                    </button>
+                </div>
+            </div>
+        </form>
+        <div class="signin-footer">
+            <a href="./login.html" data-i18n="reg.loginLink">
+                已有帐户，登陆
+            </a>
+        </div>
+    </div>
+    <div class="tipMask hide">
+        <div class="cont">
+            <p class="title" data-i18n="common.prompt">温馨提示</p>
+            <p class="stitle contents"></p>
+            <div id="msgBtn">
+                <div class="confirm guanbi" 
+                     style="background-color:#33B497;"
+                     data-i18n="common.confirm">
+                    确定
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 添加i18n.js -->
+    <script src="./static/js/jquery-1.9.1.min.js"></script>
+    <script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+    <script src="./static/js/i18n.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            // 初始化语言
+            const savedLang = localStorage.getItem('preferredLanguage') || 'zh-CN';
+            I18n.init(savedLang).then(() => {
+                console.log('语言初始化完成12:', I18n.currentLang);
+            });
+
+            // 从URL获取推荐码
+            var spread_code = new URLSearchParams(window.location.search).get('spread_code');
+            if (spread_code) {
+                $('#spread_code').val(spread_code);
+            }
+
+            // 注册按钮点击
+            $('#reg_btn').click(function() {
+                const name = $('#name').val().trim();
+                // const idcard = $('#idcard').val().trim();
+                const phone = $('#phone').val().trim();
+                const password = $('#password').val().trim();
+                const confirm_password = $('#confirm_password').val().trim();
+                const password2 = $('#password2').val().trim();
+                const confirm_password2 = $('#confirm_password2').val().trim();
+                const spread_code = $('#spread_code').val().trim();
+
+                // 验证输入
+                if (!name) {
+                    msg(I18n.t('common.prompt'), I18n.t('reg.validation.nameRequired'), 1);
+                    return;
+                }
+                if (!isValidChineseName(name)) {
+                    msg(I18n.t('common.prompt'), I18n.t('reg.validation.nameInvalid'), 1);
+                    return;
+                }
+                if (!phone) {
+                    msg(I18n.t('common.prompt'), I18n.t('reg.validation.usernameRequired'), 1);
+                    return;
+                }
+				var usernameRegex = /^[0-9a-zA-Z]+$/;
+				if (!usernameRegex.test(phone)) {
+					msg(I18n.t('common.prompt'), I18n.t('reg.validation.usernameInvalid'), 1);
+					return;
+				}
+                if (!password) {
+                    msg(I18n.t('common.prompt'), I18n.t('reg.validation.loginPasswordRequired'), 1);
+                    return;
+                }
+                if (password.length < 6 || password.length > 16) {
+                    msg(I18n.t('common.prompt'), I18n.t('reg.validation.loginPasswordLength'), 1);
+                    return;
+                }
+                if (!confirm_password) {
+                    msg(I18n.t('common.prompt'), I18n.t('reg.validation.confirmLoginPasswordRequired'), 1);
+                    return;
+                }
+                if (!password2) {
+                    msg(I18n.t('common.prompt'), I18n.t('reg.validation.paymentPasswordRequired'), 1);
+                    return;
+                }
+                if (password2.length < 6 || password2.length > 16) {
+                    msg(I18n.t('common.prompt'), I18n.t('reg.validation.paymentPasswordLength'), 1);
+                    return;
+                }
+                if (!confirm_password2) {
+                    msg(I18n.t('common.prompt'), I18n.t('reg.validation.confirmPaymentPasswordRequired'), 1);
+                    return;
+                }
+                if (password != confirm_password) {
+                    msg(I18n.t('common.prompt'), I18n.t('reg.validation.loginPasswordMismatch'), 1);
+                    return;
+                }
+                if (password2 != confirm_password2) {
+                    msg(I18n.t('common.prompt'), I18n.t('reg.validation.paymentPasswordMismatch'), 1);
+                    return;
+                }
+
+                const options = {
+                    phone,
+                    name,
+                    // idcard,
+                    password,
+                    password2,
+                    confirm_password,
+                    confirm_password2,
+      
+                    top: spread_code
+                };
+
+                AjaxUtil.post('/index/login/register', options).then(
+                    function(res) {
+                        msg(I18n.t('common.prompt'), res.info, 2, "/login.html");
+                    },
+                    function(err) {
+                        const message = (err && (err.info || err.msg)) || I18n.t('reg.validation.registerFailed');
+                        msg(I18n.t('common.prompt'), message, 1);
+                    }
+                );
+            });
+        });
+
+        function isValidChineseName(name) {
+            return /^[\u4e00-\u9fa5]+[·•]?[\u4e00-\u9fa5]+$/.test(name);
+        }
+
+        function msg(title, content, type, url) {
+            $(".title").text(title);
+            $(".contents").html(content);
+            
+            let btn = '';
+            if (type == 1) {
+                btn = '<div class="confirm guanbi" style="background-color:#33B497;" onclick="$(\'.tipMask\').hide();">' + 
+                      I18n.t('common.confirm') + '</div>';
+            } else {
+                btn = '<div class="confirm guanbi" style="background-color:#33B497;" onclick="window.location.href=\'' + 
+                      url + '\'">' + I18n.t('common.confirm') + '</div>';
+            }
+            
+            $("#msgBtn").html(btn);
+            $(".tipMask").show();
+        }
+    </script>
+</body>
+</html>

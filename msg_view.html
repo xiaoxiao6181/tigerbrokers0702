@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title data-i18n="inbox.messageDetails">消息详情</title>
+    <style type="text/css">
+        html { 
+            font-size: 35px; 
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="./static/css/common.css">
+    <script type="text/javascript" src="./static/js/bignumber.min.js"></script>
+</head>
+<body>
+    <link rel="stylesheet" type="text/css" href="./static/css/box_pay.css">
+    <div id="app">
+        <div class="box">
+            <div class="jun-content">
+                <div class="t_box_pay">
+                    <div class="t_header">
+                        <span>
+                            <img src="./static/img/goback.png" alt="" onClick="javascript:history.back()">
+                        </span>
+                        <span>
+                            <i data-i18n="inbox.messageDetails">消息详情</i>
+                        </span>
+                    </div>
+                    <div class="t_con_pay">
+                        <div class="t_money" id='title' style="text-align: center;color: #fff;height: auto;margin-bottom: .333333rem;">
+                            <!-- 标题将在这里动态填充 -->
+                        </div>
+                        <div id="content" style="background: #111723;border-top: .026667rem solid #000;color: #fff;padding: .333333rem;">
+                            <!-- 内容将在这里动态填充 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <div>
+                    <a href="./index.html" class="t_span one">
+                        <i></i>
+                        <span data-i18n="nav.home">首页</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./recharge.html" class="t_span two">
+                        <i></i>
+                        <span data-i18n="nav.recharge">充值</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./hold.html" class="t_span three">
+                        <i></i>
+                        <span data-i18n="nav.hold">持仓</span>
+                    </a>
+                </div>
+                <div>
+                    <a onClick="" class="t_span four">
+                        <i></i>
+                        <span data-i18n="nav.customerService">客服</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="./user.html" class="t_span five">
+                        <i></i>
+                        <span data-i18n="nav.my">我的</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 添加i18n.js -->
+    <script src="./static/js/i18n.js"></script>
+    <script type="text/javascript" src="./static/js/jquery-1.9.1.min.js"></script>
+    <script src="./static/js/config.js?v=20260905c"></script>
+    <script src="./static/js/ajaxUtil.js?v=20260905c"></script>
+    
+    <script type="text/javascript">
+        $(function() {
+            // 初始化语言
+            const savedLang = localStorage.getItem('preferredLanguage') || 'zh-CN';
+            I18n.init(savedLang).then(() => {
+                console.log('语言初始化完成:', I18n.currentLang);
+                loadMessage();
+                updateUIText();
+            });
+            
+            // 监听语言变化
+            $(document).on('languageChanged', function(event, lang) {
+                console.log('语言已切换到:', lang);
+                updateUIText();
+            });
+            
+            // 高亮当前导航
+            highlightNav();
+        });
+        
+        function loadMessage() {
+            var msg = new URLSearchParams(window.location.search).get('data');
+            if(msg){
+                msg = JSON.parse(decodeURIComponent(msg));
+                $("#title").text(msg.title);
+                $("#content").html(normalizeUploadHtml(msg.content));
+				
+				 AjaxUtil.get("/index/user/msg_view?id="+msg.id).then((res) => {})
+            }
+        }
+        
+        function updateUIText() {
+            // 更新标题
+            document.title = I18n.t('inbox.messageDetails');
+            
+            // 更新导航栏标题
+            $('.t_header i[data-i18n]').text(I18n.t('inbox.messageDetails'));
+            
+            // 更新导航栏文字
+            $('[data-i18n="nav.home"]').text(I18n.t('nav.home'));
+            $('[data-i18n="nav.recharge"]').text(I18n.t('nav.recharge'));
+            $('[data-i18n="nav.hold"]').text(I18n.t('nav.hold'));
+            $('[data-i18n="nav.customerService"]').text(I18n.t('nav.customerService'));
+            $('[data-i18n="nav.my"]').text(I18n.t('nav.my'));
+        }
+        
+        function highlightNav() {
+            var nav = "user";
+            $(".t_span").removeClass("router-link-exact-active");
+            
+            if (nav == "index") {
+                $(".one").addClass("router-link-exact-active");
+            }
+            if (nav == "recharge") {
+                $(".two").addClass("router-link-exact-active");
+            }
+            if (nav == "hold") {
+                $(".three").addClass("router-link-exact-active");
+            }
+            if (nav == "yeb") {
+                $(".four").addClass("router-link-exact-active");
+            }
+            if (nav == "user") {
+                $(".five").addClass("router-link-exact-active");
+            }
+        }
+    </script>
+</body>
+</html>
