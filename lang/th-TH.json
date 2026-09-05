@@ -1,0 +1,130 @@
+{
+  "language": "ภาษาไทย",
+  "version": "เวอร์ชัน",
+  "common": {
+    "zh": "简体中文",
+    "en": "English",
+    "th": "ภาษาไทย",
+    "confirm": "ตกลง",
+    "prompt": "คำแนะนำ",
+    "cancel": "ยกเลิก",
+    "back": "กลับ",
+    "next": "ถัดไป",
+    "loading": "กำลังโหลด..."
+  },
+  "login": {
+    "usernamePlaceholder": "กรุณาใส่ชื่อผู้ใช้",
+    "passwordPlaceholder": "กรุณาใส่รหัสผ่าน",
+    "loginButton": "เข้าสู่ระบบ",
+    "registerLink": "สมัครสมาชิก",
+    "forgotPassword": "ลืมรหัสผ่าน?",
+    "customerService": "บริการลูกค้าออนไลน์",
+    "usernameError": "กรุณาใส่ชื่อผู้ใช้ที่ถูกต้อง",
+    "passwordError": "รหัสผ่านผิดพลาด กรุณาลองอีกครั้ง",
+    "loginSuccess": "เข้าสู่ระบบสำเร็จ",
+    "loginFailure": "เข้าสู่ระบบล้มเหลว",
+    "hello": "สวัสดี",
+    "welcome": "ยินดีต้อนรับ"
+  },
+  "reg": {
+    "validation": {
+      "nameRequired": "กรุณาใส่ชื่อ",
+      "nameInvalid": "กรุณาใส่ชื่อที่ถูกต้อง",
+      "usernameRequired": "กรุณาใส่ชื่อผู้ใช้",
+      "usernameInvalid": "ชื่อผู้ใช้ต้องเป็นตัวอักษรและตัวเลขเท่านั้น",
+      "loginPasswordRequired": "กรุณาใส่รหัสผ่านเข้าสู่ระบบ",
+      "confirmLoginPasswordRequired": "กรุณายืนยันรหัสผ่านเข้าสู่ระบบ",
+      "paymentPasswordRequired": "กรุณาใส่รหัสผ่านชำระเงิน",
+      "confirmPaymentPasswordRequired": "กรุณายืนยันรหัสผ่านชำระเงิน",
+      "loginPasswordLength": "กรุณาใส่รหัสผ่านเข้าสู่ระบบ 6-16 หลัก",
+      "paymentPasswordLength": "กรุณาใส่รหัสผ่านชำระเงิน 6-16 หลัก",
+      "loginPasswordMismatch": "รหัสผ่านเข้าสู่ระบบไม่ตรงกัน",
+      "paymentPasswordMismatch": "รหัสผ่านชำระเงินไม่ตรงกัน",
+      "accountExist": "บัญชีนี้ลงทะเบียนแล้ว",
+      "inviteCodeInvalid": "รหัสเชิญไม่ถูกต้อง",
+      "registerFailed": "ลงทะเบียนล้มเหลว กรุณาลองอีกครั้ง"
+    }
+  },
+  "bank_card": {
+    "validation": {
+      "nameRequired": "กรุณาใส่ชื่อ",
+      "nameInvalid": "กรุณาใส่ชื่อที่ถูกต้อง",
+      "bindFailed": "ผูกบัญชีล้มเหลว กรุณาลองอีกครั้ง"
+    },
+    "bindSuccess": "ผูกบัญชีสำเร็จ",
+    "bindFailed": "ผูกบัญชีล้มเหลว"
+  },
+  "nav": {
+    "home": "หน้าแรก",
+    "recharge": "เติมเงิน",
+    "hold": "ถือครอง",
+    "customerService": "บริการลูกค้า",
+    "my": "ของฉัน"
+  },
+  "user": {
+    "title": "ศูนย์ส่วนตัว",
+    "personalCenter": "ศูนย์ส่วนตัว",
+    "latestAnnouncement": "ประกาศล่าสุด",
+    "realMe": "ยืนยันตัวตน",
+    "companyProfile": "เกี่ยวกับบริษัท"
+  },
+  "companyProfile": {
+    "title": "เกี่ยวกับบริษัท",
+    "badge": "เกี่ยวกับเรา",
+    "vision": "วิสัยทัศน์",
+    "mission": "พันธกิจ",
+    "values": "คุณค่าหลัก",
+    "detail": "รายละเอียด",
+    "loading": "กำลังโหลด...",
+    "empty": "ยังไม่มีข้อมูลบริษัท",
+    "updatedAt": "อัปเดตเมื่อ "
+  },
+  "recharge": {
+    "title": "เติมเงิน",
+    "tip": "คำแนะนำ: กรุณายืนยันว่าโอนเงินสำเร็จแล้วจึงส่งยอดเติมเงิน",
+    "paymentMethod": "วิธีชำระเงิน",
+    "payeeName": "ชื่อผู้รับเงิน",
+    "name": "ชื่อ",
+    "rechargeName": "ชื่อผู้เติมเงิน",
+    "rechargeNamePlaceholder": "กรุณาใส่ชื่อผู้เติมเงิน",
+    "rechargeRemark": "หมายเหตุการเติมเงิน",
+    "rechargeRemarkPlaceholder": "กรุณาใส่หมายเหตุการเติมเงิน",
+    "cardNumber": "เลขบัตร",
+    "walletAddress": "ที่อยู่กระเป๋าเงิน",
+    "exchangeRate": "อัตราแลกเปลี่ยน",
+    "rechargeAmount": "จำนวนเงินเติม",
+    "rechargeAmountPlaceholder": "กรุณาใส่จำนวนเงินเติม",
+    "actualAmount": "ยอดที่ได้รับจริง",
+    "rechargeButton": "เติมเงิน",
+    "validation": {
+      "amountError": "จำนวนเงินเติมไม่ถูกต้อง",
+      "selectPaymentMethod": "กรุณาเลือกวิธีชำระเงิน",
+      "enterAmount": "กรุณาใส่จำนวนเงินเติม",
+      "enterName": "กรุณาใส่ชื่อผู้เติมเงิน",
+      "enterRemark": "กรุณาใส่หมายเหตุการเติมเงิน"
+    }
+  },
+  "fund": {
+    "title": "รายละเอียดเงินทุน",
+    "time": "เวลา",
+    "remark": "หมายเหตุ",
+    "amount": "จำนวนเงิน",
+    "noData": "ไม่มีบันทึกเงินทุน",
+    "loading": "กำลังโหลด...",
+    "loadingFailed": "โหลดล้มเหลว",
+    "remarks": {
+      "balanceWithdraw": "ถอนยอดคงเหลือ {amount}",
+      "withdrawFailedRefund": "ถอนเงินล้มเหลว คืนเงิน {amount}"
+    },
+    "types": {
+      "recharge": "เติมเงิน",
+      "withdraw": "ถอนเงิน",
+      "trade": "ซื้อขาย",
+      "profit": "กำไร",
+      "loss": "ขาดทุน",
+      "bonus": "โบนัส",
+      "fee": "ค่าธรรมเนียม",
+      "refund": "คืนเงิน"
+    }
+  }
+}

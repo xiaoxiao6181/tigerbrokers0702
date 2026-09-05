@@ -1,0 +1,53 @@
+/* tipMask CSS */
+.tipMask {
+    width: 100%;
+    height: 100%;
+    background: rgba(95, 95, 95, 0.3);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 3;
+}
+
+.hide {
+    display: none;
+}
+
+.tipMask .cont {
+    width: 60%;
+    padding: 5% 10%;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    position: absolute;
+    top: 30%;
+    left: 10%;
+    text-align: center;
+}
+
+.tipMask .cont .title {
+    font-size: .34rem;
+    line-height: .48rem;
+    color: #191919;
+}
+
+.tipMask .cont .stitle {
+    font-size: .3rem;
+    line-height: .42rem;
+    color: #606060;
+    margin-top: .36rem;
+}
+
+.tipMask .cont .confirm {
+    width: 100%;
+    height: .88rem;
+    background-color: #EF6F6C;
+    border-radius: 4px;
+    font-size: .34rem;
+    color: #fff;
+    line-height: .88rem;
+    text-align: center;
+    margin-top: .5rem;
+}
+.confirm {
+    background-color: #0084FF !important;
+}
